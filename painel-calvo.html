@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Calvo | CarecAI</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Carec<span>AI</span></a>
+
+      <nav aria-label="Navegacao principal">
+        <a href="analise.html">Analisar</a>
+        <a href="galeria.html">Galeria</a>
+        <a href="ranking.html">Ranking</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-button" id="sair-btn" type="button">Sair</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="painel-hero painel-hero--calvo">
+        <p class="eyebrow">CALVO EM EVOLUCAO</p>
+        <h1>Vai chegar lá, <span id="painel-nome">Calvo</span>!</h1>
+        <p>Voce esta no caminho certo. Sua calvicie esta evoluindo.</p>
+
+        <div class="painel-score-wrap">
+          <span class="painel-score" id="painel-score">--</span>
+          <span class="painel-score-label">pontos de calvo</span>
+        </div>
+
+        <div class="progresso-wrap">
+          <div class="progresso-bar">
+            <div class="progresso-fill" id="progresso-fill"></div>
+          </div>
+          <p class="progresso-texto">
+            Faltam <strong id="faltam">--</strong> pts para ser promovido a Careca Elite
+          </p>
+        </div>
+
+        <div class="painel-badge painel-badge--calvo">🌱 Aspirante Craniano</div>
+      </section>
+
+      <section class="features">
+        <h2>O que fazer agora</h2>
+        <div class="card-grid">
+          <a class="card card-link" href="analise.html">
+            <h3>Tentar de novo</h3>
+            <p>Envie outra foto. Talvez hoje sua careca brilhe mais.</p>
+          </a>
+          <a class="card card-link" href="galeria.html">
+            <h3>Galeria de tapas</h3>
+            <p>Tape as carecas alheias enquanto a sua nao chega la.</p>
+          </a>
+          <a class="card card-link" href="ranking.html">
+            <h3>Ranking</h3>
+            <p>Veja quanta gente ja passou por voce.</p>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>CarecAI - Ciencia avancada para superficies brilhantes.</p>
+    </footer>
+
+    <script src="assets/js/painel.js"></script>
+  </body>
+</html>

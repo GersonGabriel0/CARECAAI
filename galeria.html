@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+      name="description"
+      content="Galeria de carecas. Clique na foto para dar um tapa."
+    >
+    <title>Galeria | CarecAI</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Carec<span>AI</span></a>
+
+      <nav aria-label="Navegacao principal">
+        <a href="index.html">Inicio</a>
+        <a href="analise.html">Analisar</a>
+        <a href="galeria.html" aria-current="page">Galeria</a>
+        <a href="ranking.html">Ranking</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="login-link" href="login.html">Entrar</a>
+        <button class="theme-button" id="theme-button" type="button">
+          Ativar Bald Mode
+        </button>
+      </div>
+    </header>
+
+    <main class="galeria-page">
+      <div class="galeria-header">
+        <h1>Galeria de <span>Carecas</span></h1>
+        <p>Clique na foto para dar um tapa na careca. Bem mais satisfatorio que curtir.</p>
+
+        <div class="filtros">
+          <button class="filtro-btn active" data-tipo="todos">Todos</button>
+          <button class="filtro-btn filtro-careca" data-tipo="careca">🏆 Carecas</button>
+          <button class="filtro-btn filtro-calvo" data-tipo="calvo">🌱 Calvos</button>
+        </div>
+      </div>
+
+      <div class="galeria-grid" id="galeria-grid">
+        <p class="galeria-loading">Carregando carecas...</p>
+      </div>
+    </main>
+
+    <footer>
+      <p>CarecAI - Ciencia avancada para superficies brilhantes.</p>
+    </footer>
+
+    <script src="assets/js/galeria.js"></script>
+  </body>
+</html>

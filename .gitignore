@@ -1,0 +1,4 @@
+.env
+api/config/database.php
+*.log
+.DS_Store

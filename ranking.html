@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+      name="description"
+      content="Ranking das melhores carecas do CarecAI."
+    >
+    <title>Ranking | CarecAI</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Carec<span>AI</span></a>
+
+      <nav aria-label="Navegacao principal">
+        <a href="index.html">Inicio</a>
+        <a href="analise.html">Analisar</a>
+        <a href="galeria.html">Galeria</a>
+        <a href="ranking.html" aria-current="page">Ranking</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="login-link" href="login.html">Entrar</a>
+        <button class="theme-button" id="theme-button" type="button">
+          Ativar Bald Mode
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="ranking" id="ranking">
+        <h2>Ranking</h2>
+        <p>Carecas de um lado, calvos do outro. Cada um no seu lugar.</p>
+
+        <div class="ranking-split">
+          <div class="ranking-lado ranking-lado--careca">
+            <h3>🏆 Carecas Elite</h3>
+            <ol id="ranking-carecas">
+              <li>Carregando...</li>
+            </ol>
+          </div>
+
+          <div class="ranking-divisor"></div>
+
+          <div class="ranking-lado ranking-lado--calvo">
+            <h3>🌱 Calvos em Evolucao</h3>
+            <ol id="ranking-calvos">
+              <li>Carregando...</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>CarecAI - Ciencia avancada para superficies brilhantes.</p>
+    </footer>
+
+    <script src="assets/js/ranking.js"></script>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+      name="description"
+      content="Entre no CarecAI enviando sua foto. Sem senha, so careca."
+    >
+    <title>Entrar | CarecAI</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html">Carec<span>AI</span></a>
+
+      <nav aria-label="Navegacao principal">
+        <a href="index.html">Inicio</a>
+        <a href="analise.html">Analisar</a>
+        <a href="galeria.html">Galeria</a>
+        <a href="ranking.html">Ranking</a>
+      </nav>
+    </header>
+
+    <main class="login-page">
+      <section class="login-card">
+        <a class="brand" href="index.html">Carec<span>AI</span></a>
+        <h1>Identifique sua careca</h1>
+        <p>Sem senha. So envie sua foto e o sistema descobre quem voce e.</p>
+
+        <form class="login-form" id="login-form">
+          <label>
+            Usuario
+            <input
+              autocomplete="username"
+              id="usuario"
+              name="usuario"
+              placeholder="Seu usuario"
+              required
+              type="text"
+            >
+          </label>
+
+          <label class="upload-area" id="upload-label" for="photo-login">
+            <strong id="upload-texto">Enviar foto da careca</strong>
+            <span>JPG, PNG ou WEBP</span>
+          </label>
+          <input accept="image/*" id="photo-login" type="file">
+
+          <img
+            class="foto-preview"
+            id="foto-preview"
+            alt="Preview da foto"
+            hidden
+          >
+
+          <button class="primary-button" type="submit">Identificar</button>
+          <p class="form-message" id="login-message"></p>
+        </form>
+
+        <div class="resultado-card" id="resultado" hidden>
+          <p class="resultado-score" id="resultado-score">0</p>
+          <p class="resultado-tipo" id="resultado-tipo">-</p>
+          <p class="resultado-desc" id="resultado-desc"></p>
+        </div>
+      </section>
+    </main>
+
+    <script src="assets/js/login.js"></script>
+  </body>
+</html>
