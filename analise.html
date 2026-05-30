@@ -34,7 +34,7 @@
         <div>
           <p class="eyebrow">CARECA LAB</p>
           <h2>Envie sua foto</h2>
-          <p>A primeira versao usa uma analise simulada para validar a ideia.</p>
+          <p>O Gemini avalia a cobertura craniana e libera seu diagnostico.</p>
         </div>
 
         <label class="upload-area" for="photo">
@@ -42,11 +42,22 @@
           <span>JPG, PNG ou WEBP</span>
         </label>
         <input accept="image/*" id="photo" type="file">
+        <div class="analysis-preview" id="analysis-preview" hidden>
+          <img alt="Preview da foto enviada" id="analysis-image">
+          <div class="bald-overlay" id="analysis-bald-overlay" hidden></div>
+        </div>
 
         <button class="primary-button" id="analyze-button" type="button">
           Gerar analise
         </button>
         <p class="feedback" id="feedback"></p>
+        <div class="bald-offer" id="analysis-bald-offer" hidden>
+          <h3>Seu cabelo ainda oferece resistencia ao vento.</h3>
+          <p>Deseja ativar o pacote executivo de aerodinamica craniana?</p>
+          <button class="primary-button" id="analysis-bald-button" type="button">
+            Aplicar modo careca turbo
+          </button>
+        </div>
       </section>
     </main>
 

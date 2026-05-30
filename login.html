@@ -10,60 +10,99 @@
     <title>Entrar | CarecAI</title>
     <link rel="stylesheet" href="assets/css/style.css">
   </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="index.html">Carec<span>AI</span></a>
-
-      <nav aria-label="Navegacao principal">
-        <a href="index.html">Inicio</a>
-        <a href="analise.html">Analisar</a>
-        <a href="galeria.html">Galeria</a>
-        <a href="ranking.html">Ranking</a>
-      </nav>
-    </header>
+  <body class="login-body">
 
     <main class="login-page">
-      <section class="login-card">
-        <a class="brand" href="index.html">Carec<span>AI</span></a>
-        <h1>Identifique sua careca</h1>
-        <p>Sem senha. So envie sua foto e o sistema descobre quem voce e.</p>
 
-        <form class="login-form" id="login-form">
-          <label>
-            Usuario
-            <input
-              autocomplete="username"
-              id="usuario"
-              name="usuario"
-              placeholder="Seu usuario"
-              required
-              type="text"
-            >
-          </label>
+      <!-- LADO ESQUERDO: branding -->
+      <div class="login-branding">
+        <a class="brand brand--white" href="index.html">Carec<span>AI</span></a>
 
-          <label class="upload-area" id="upload-label" for="photo-login">
-            <strong id="upload-texto">Enviar foto da careca</strong>
-            <span>JPG, PNG ou WEBP</span>
-          </label>
-          <input accept="image/*" id="photo-login" type="file">
+        <div class="login-branding-content">
+          <h2>Sem senha.<br>So careca.</h2>
+          <p>Envie sua foto. O sistema analisa e classifica sua careca em segundos.</p>
 
-          <img
-            class="foto-preview"
-            id="foto-preview"
-            alt="Preview da foto"
-            hidden
-          >
-
-          <button class="primary-button" type="submit">Identificar</button>
-          <p class="form-message" id="login-message"></p>
-        </form>
-
-        <div class="resultado-card" id="resultado" hidden>
-          <p class="resultado-score" id="resultado-score">0</p>
-          <p class="resultado-tipo" id="resultado-tipo">-</p>
-          <p class="resultado-desc" id="resultado-desc"></p>
+          <ul class="login-features-list">
+            <li>✓ Analise craniana com IA</li>
+            <li>✓ Painel exclusivo por tipo</li>
+            <li>✓ Galeria de tapas e maquinadas</li>
+            <li>✓ Ranking de carecas e calvos</li>
+          </ul>
         </div>
-      </section>
+
+        <div class="login-branding-emojis" aria-hidden="true">
+          <span>🏆</span>
+          <span>🪒</span>
+          <span>✨</span>
+          <span>👋</span>
+        </div>
+      </div>
+
+      <!-- LADO DIREITO: formulario -->
+      <div class="login-form-side">
+        <section class="login-card">
+          <a class="brand" href="index.html">Carec<span>AI</span></a>
+          <h1>Identifique sua careca</h1>
+          <p class="login-subtitle">Envie uma foto e descubra se voce e careca ou calvo.</p>
+
+          <form class="login-form" id="login-form" novalidate>
+
+            <label class="input-label">
+              Usuario
+              <input
+                autocomplete="username"
+                id="usuario"
+                name="usuario"
+                placeholder="Seu usuario"
+                required
+                type="text"
+              >
+            </label>
+
+            <label class="upload-area upload-area--login" id="upload-label" for="photo-login">
+              <span class="upload-icon">📷</span>
+              <strong id="upload-texto">Enviar foto da careca</strong>
+              <span class="upload-hint">JPG, PNG ou WEBP</span>
+            </label>
+            <input accept="image/*" id="photo-login" type="file">
+
+            <div class="foto-preview-wrap" id="foto-preview-wrap" hidden>
+              <img
+                class="foto-preview"
+                id="foto-preview"
+                alt="Preview da foto"
+              >
+              <div class="bald-overlay" id="bald-overlay" hidden></div>
+            </div>
+
+            <button class="primary-button btn-identificar" type="submit">
+              Identificar minha careca
+            </button>
+
+            <p class="form-message" id="login-message"></p>
+          </form>
+
+          <div class="bald-offer" id="bald-offer" hidden>
+            <p class="bald-offer-emoji">🪒</p>
+            <h3>Excesso de cobertura detectado.</h3>
+            <p>Deseja o upgrade aerodinamico gratuito?</p>
+            <button class="primary-button" id="bald-filter-button" type="button">
+              Ativar modo pista de pouso
+            </button>
+          </div>
+
+          <div class="resultado-card" id="resultado" hidden>
+            <p class="resultado-score" id="resultado-score">0</p>
+            <p class="resultado-tipo" id="resultado-tipo">-</p>
+            <p class="resultado-desc" id="resultado-desc"></p>
+            <a class="primary-button result-link" href="#" id="continue-link">
+              Ir para meu painel →
+            </a>
+          </div>
+
+        </section>
+      </div>
+
     </main>
 
     <script src="assets/js/login.js"></script>

@@ -3,10 +3,15 @@ const photoInput  = document.querySelector('#photo-login');
 const uploadLabel = document.querySelector('#upload-label');
 const uploadTexto = document.querySelector('#upload-texto');
 const preview     = document.querySelector('#foto-preview');
+const previewWrap = document.querySelector('#foto-preview-wrap');
 const msg         = document.querySelector('#login-message');
 const resultado   = document.querySelector('#resultado');
+const baldOffer   = document.querySelector('#bald-offer');
+const baldButton  = document.querySelector('#bald-filter-button');
+const baldOverlay = document.querySelector('#bald-overlay');
+const continueLink = document.querySelector('#continue-link');
 
-const LIMIAR_CARECA = 80;
+let savedFotoPath = '';
 
 photoInput.addEventListener('change', () => {
   const file = photoInput.files[0];
@@ -14,21 +19,21 @@ photoInput.addEventListener('change', () => {
   uploadTexto.textContent = file.name;
   uploadLabel.classList.add('com-foto');
   preview.src = URL.createObjectURL(file);
-  preview.hidden = false;
+  previewWrap.hidden = false;
 });
 
 const MENSAGENS_ANALISE = [
   'Medindo brilho craniano...',
   'Calculando aerodinamica...',
   'Verificando refletividade...',
-  'Consultando base de carecas...',
+  'Consultando o Gemini...',
   'Classificando resultado...',
 ];
 
 async function rodarAnalise() {
   for (const texto of MENSAGENS_ANALISE) {
     msg.textContent = texto;
-    await esperar(360);
+    await esperar(260);
   }
 }
 
@@ -36,17 +41,11 @@ function esperar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function gerarScore() {
-  // 65% de chance de careca para demo mais interessante
-  return Math.random() < 0.65
-    ? Math.floor(Math.random() * 21) + 80   // 80-100
-    : Math.floor(Math.random() * 60) + 15;  // 15-79
-}
-
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
 
   const usuario = document.querySelector('#usuario').value.trim();
+  const submitButton = form.querySelector('button[type="submit"]');
 
   if (!usuario) {
     msg.textContent = 'Informe seu usuario.';
@@ -58,28 +57,80 @@ form.addEventListener('submit', async (e) => {
     return;
   }
 
-  form.querySelector('button[type="submit"]').disabled = true;
-
+  submitButton.disabled = true;
   await rodarAnalise();
 
-  const score = gerarScore();
-  const tipo  = score >= LIMIAR_CARECA ? 'careca' : 'calvo';
+  const formData = new FormData();
+  formData.append('usuario', usuario);
+  formData.append('photo', photoInput.files[0]);
 
-  sessionStorage.setItem('carecai_usuario', usuario);
-  sessionStorage.setItem('carecai_score',   score);
-  sessionStorage.setItem('carecai_tipo',    tipo);
+  let analise;
+
+  try {
+    const response = await fetch('api/analisar.php', {
+      method: 'POST',
+      body: formData,
+    });
+    analise = await response.json();
+
+    if (!response.ok) {
+      throw new Error(analise.error || 'Nao foi possivel analisar a foto.');
+    }
+  } catch (error) {
+    msg.textContent = error.message;
+    submitButton.disabled = false;
+    return;
+  }
+
+  savedFotoPath = analise.foto_path || '';
+
+  sessionStorage.setItem('carecai_usuario',   usuario);
+  sessionStorage.setItem('carecai_score',     analise.score);
+  sessionStorage.setItem('carecai_tipo',      analise.tipo);
+  sessionStorage.setItem('carecai_foto_path', savedFotoPath);
 
   msg.textContent = '';
   resultado.hidden = false;
+  baldOffer.hidden = !analise.needs_bald_filter;
 
-  document.querySelector('#resultado-score').textContent = score + ' pts';
-  document.querySelector('#resultado-tipo').textContent  =
-    tipo === 'careca' ? '🏆 CARECA VERIFICADO' : '🌱 CALVO EM EVOLUCAO';
-  document.querySelector('#resultado-desc').textContent  =
-    tipo === 'careca'
-      ? 'Redirecionando para o painel elite...'
-      : 'Redirecionando para o painel aspirante...';
+  document.querySelector('#resultado-score').textContent = `${analise.score} pts`;
+  document.querySelector('#resultado-tipo').textContent =
+    analise.tipo === 'careca' ? 'CARECA VERIFICADO' : 'CALVO EM EVOLUCAO';
+  document.querySelector('#resultado-desc').textContent = analise.message;
+  continueLink.href =
+    analise.tipo === 'careca' ? 'painel-careca.html' : 'painel-calvo.html';
 
-  await esperar(1800);
-  window.location.href = tipo === 'careca' ? 'painel-careca.html' : 'painel-calvo.html';
+  if (!analise.needs_bald_filter) {
+    await esperar(1800);
+    window.location.href = continueLink.href;
+  }
+});
+
+baldButton.addEventListener('click', async () => {
+  baldButton.disabled = true;
+  msg.textContent = 'Aplicando upgrade aerodinamico com IA...';
+
+  const formData = new FormData();
+  formData.append('foto_path', savedFotoPath);
+
+  try {
+    const response = await fetch('api/aplicar-filtro.php', {
+      method: 'POST',
+      body: formData,
+    });
+    const filtro = await response.json();
+
+    if (!response.ok) {
+      throw new Error(filtro.error || 'Nao foi possivel aplicar o filtro.');
+    }
+
+    preview.src = filtro.image;
+    baldOverlay.hidden = true;
+    msg.textContent = 'Upgrade aplicado: menos cabelo, mais velocidade de cruzeiro.';
+  } catch (error) {
+    baldOverlay.hidden = false;
+    msg.textContent = `${error.message} Exibindo a simulacao local.`;
+  } finally {
+    baldButton.disabled = false;
+  }
 });

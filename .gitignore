@@ -1,4 +1,5 @@
 .env
 api/config/database.php
+api/config/gemini.php
 *.log
 .DS_Store

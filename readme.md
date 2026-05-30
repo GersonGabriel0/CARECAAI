@@ -13,13 +13,33 @@ humoristicas e registra as melhores pontuacoes em um ranking de carecas.
 - PHP
 - MySQL
 
+No PHP, habilite `pdo_mysql` e pelo menos uma forma de realizar requisicoes
+HTTPS: a extensao `curl` ou `allow_url_fopen` com suporte a OpenSSL.
+
+No Windows, localize o arquivo carregado com:
+
+```bash
+php --ini
+```
+
+Depois habilite no `php.ini`, removendo o `;` do inicio das linhas:
+
+```ini
+extension=openssl
+extension=curl
+extension=pdo_mysql
+```
+
 ## Estrutura
 
 ```txt
 CARECA/
   api/
     config/
-      database.example.php   Modelo de configuracao local
+      database-example.php   Modelo de configuracao local
+      gemini-example.php     Modelo da chave da API Gemini
+    analisar.php             Analise da foto com Gemini e login
+    aplicar-filtro.php       Edicao careca da foto com Gemini
     ranking.php              GET e POST do ranking
     tapas.php                GET fotos com contagem e POST tapa
   assets/
@@ -28,10 +48,10 @@ CARECA/
     images/                  Imagens do projeto
     js/
       index.js               Bald Mode da landing
-      app.js                 Logica de upload e analise simulada
+      app.js                 Upload e analise com Gemini
       ranking.js             Consumo da API de ranking
       galeria.js             Galeria de tapas e animacoes
-      login.js               Validacao do formulario de login
+      login.js               Login por foto conectado ao PHP
   database/
     schema.sql               Banco, tabelas e dados de teste
   index.html                 Landing page
@@ -46,13 +66,16 @@ CARECA/
 1. Instale XAMPP, Laragon ou outro ambiente com PHP e MySQL.
 2. Coloque o projeto na pasta publica do servidor.
 3. Execute `database/schema.sql` no MySQL.
-4. Copie `api/config/database.example.php` para `api/config/database.php`.
+4. Copie `api/config/database-example.php` para `api/config/database.php`.
 5. Ajuste as credenciais no arquivo criado.
-6. Abra o projeto no navegador.
+6. Copie `api/config/gemini-example.php` para `api/config/gemini.php`.
+7. Informe sua chave da API Gemini no arquivo criado.
+8. Abra o projeto no navegador.
 
 Exemplo com o servidor embutido do PHP:
 
 ```bash
+C:\xampp\php\php.exe -S localhost:8000
 php -S localhost:8000
 ```
 
@@ -62,23 +85,23 @@ Depois acesse:
 http://localhost:8000
 ```
 
-Nunca envie `api/config/database.php` para o GitHub.
+Nunca envie `api/config/database.php` ou `api/config/gemini.php` para o GitHub.
 
 ## Estado atual
 
 - Pagina inicial responsiva.
-- Upload de imagem com analise simulada.
+- Upload de imagem analisado pelo Gemini.
 - Bald Mode propositalmente dificil de ler.
-- Tela inicial de login pronta para integrar com o backend.
+- Login por usuario e foto integrado ao PHP/MySQL.
 - Endpoint PHP do ranking com listagem e cadastro.
 - Script SQL para criar a tabela `rankings`.
 
 ## Proximas entregas
 
-1. Criar tabela de usuarios e endpoint PHP de autenticacao.
+1. Salvar os arquivos enviados e exibi-los na galeria.
 2. Montar o painel visual com todas as metricas da analise.
-3. Consumir `api/ranking.php` no frontend.
-4. Salvar a pontuacao do usuario autenticado.
+3. Substituir os mocks restantes da galeria pelo banco.
+4. Salvar a imagem editada quando o usuario aplicar o filtro por IA.
 5. Melhorar responsividade e incluir imagens.
 
 ## Divisao da equipe
