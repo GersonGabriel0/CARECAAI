@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+session_start();
 header('Content-Type: application/json; charset=utf-8');
 
 $configFile = __DIR__ . '/config/database.php';
@@ -22,7 +23,7 @@ $dsn = sprintf(
 
 try {
     $pdo = new PDO($dsn, $config['username'], $config['password'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 } catch (PDOException $e) {
@@ -32,25 +33,46 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $query = $pdo->query(
-        'SELECT f.id, u.usuario, u.tipo, f.arquivo AS foto, f.score, COUNT(t.foto_id) AS tapas
+    $fotos = $pdo->query(
+        'SELECT f.id, u.usuario, u.tipo, f.arquivo AS foto, f.score, COUNT(i.foto_id) AS tapas
          FROM usuarios u
          JOIN fotos f ON f.id = (
-             SELECT f2.id
-             FROM fotos f2
+             SELECT f2.id FROM fotos f2
              WHERE f2.usuario_id = u.id
              ORDER BY f2.created_at DESC, f2.id DESC
              LIMIT 1
          )
-         LEFT JOIN tapas t ON t.foto_id = f.id
+         LEFT JOIN interacoes i ON i.foto_id = f.id
          GROUP BY f.id, u.usuario, u.tipo, f.arquivo, f.score
          ORDER BY tapas DESC, f.score DESC'
-    );
-    echo json_encode($query->fetchAll());
+    )->fetchAll();
+
+    $jaTapou   = [];
+    $usuarioId = $_SESSION['carecai_usuario_id'] ?? null;
+
+    if ($usuarioId) {
+        $stmt = $pdo->prepare('SELECT foto_id FROM interacoes WHERE usuario_id = :uid');
+        $stmt->execute(['uid' => $usuarioId]);
+        $jaTapou = array_map('intval', array_column($stmt->fetchAll(), 'foto_id'));
+    }
+
+    foreach ($fotos as &$foto) {
+        $foto['ja_tapou'] = in_array((int) $foto['id'], $jaTapou, true);
+    }
+
+    echo json_encode(array_values($fotos));
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $usuarioId = $_SESSION['carecai_usuario_id'] ?? null;
+
+    if (!$usuarioId) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Faca login para interagir.']);
+        exit;
+    }
+
     $payload = json_decode(file_get_contents('php://input'), true);
     $fotoId  = filter_var($payload['foto_id'] ?? null, FILTER_VALIDATE_INT);
 
@@ -60,15 +82,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $ip = $_SERVER['REMOTE_ADDR'];
-
     $stmt = $pdo->prepare(
-        'INSERT IGNORE INTO tapas (foto_id, ip) VALUES (:foto_id, :ip)'
+        'INSERT IGNORE INTO interacoes (foto_id, usuario_id) VALUES (:foto_id, :usuario_id)'
     );
-    $stmt->execute(['foto_id' => $fotoId, 'ip' => $ip]);
+    $stmt->execute(['foto_id' => $fotoId, 'usuario_id' => $usuarioId]);
+
+    if ($stmt->rowCount() === 0) {
+        http_response_code(409);
+        echo json_encode(['error' => 'Voce ja interagiu com esta foto.']);
+        exit;
+    }
 
     http_response_code(201);
-    echo json_encode(['message' => 'Tapa registrado.']);
+    echo json_encode(['message' => 'Interacao registrada.']);
     exit;
 }
 

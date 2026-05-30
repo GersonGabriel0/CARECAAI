@@ -24,10 +24,12 @@ CREATE TABLE IF NOT EXISTS fotos (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS tapas (
+-- tapa (careca) ou maquinada (calvo): uma interacao por usuario por foto
+CREATE TABLE IF NOT EXISTS interacoes (
     foto_id    INT UNSIGNED NOT NULL,
-    ip         VARCHAR(45) NOT NULL,
+    usuario_id INT UNSIGNED NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (foto_id, ip),
-    FOREIGN KEY (foto_id) REFERENCES fotos(id) ON DELETE CASCADE
+    PRIMARY KEY (foto_id, usuario_id),
+    FOREIGN KEY (foto_id)    REFERENCES fotos(id)    ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );

@@ -63,6 +63,16 @@ footer {
 
 .perfil-emoji { font-size: 15px; line-height: 1; }
 
+.perfil-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #bcb0f8;
+  display: block;
+  flex-shrink: 0;
+}
+
 .perfil-usuario {
   font-size: 13px;
   font-weight: 700;

@@ -1,17 +1,36 @@
 (function () {
-  const usuario = sessionStorage.getItem('carecai_usuario');
-  const tipo    = sessionStorage.getItem('carecai_tipo');
-  const link    = document.querySelector('.login-link');
+  const usuario  = sessionStorage.getItem('carecai_usuario');
+  const tipo     = sessionStorage.getItem('carecai_tipo');
+  const fotoPath = sessionStorage.getItem('carecai_foto_path');
+  const link     = document.querySelector('.login-link');
 
   if (!link || !usuario || !tipo) return;
 
   const painelUrl = tipo === 'careca' ? 'painel-careca.html' : 'painel-calvo.html';
-  const emoji     = tipo === 'careca' ? '🏆' : '🌱';
+  const fallback  = tipo === 'careca' ? '🏆' : '🌱';
 
   const perfil = document.createElement('a');
   perfil.className = 'perfil-link';
   perfil.href = painelUrl;
-  perfil.innerHTML = `<span class="perfil-emoji">${emoji}</span><span class="perfil-usuario">@${usuario}</span>`;
+
+  if (fotoPath) {
+    const img = document.createElement('img');
+    img.className = 'perfil-avatar';
+    img.src = fotoPath;
+    img.alt = usuario;
+    img.onerror = () => { img.replaceWith(document.createTextNode(fallback)); };
+    perfil.appendChild(img);
+  } else {
+    const emoji = document.createElement('span');
+    emoji.className = 'perfil-emoji';
+    emoji.textContent = fallback;
+    perfil.appendChild(emoji);
+  }
+
+  const nome = document.createElement('span');
+  nome.className = 'perfil-usuario';
+  nome.textContent = `@${usuario}`;
+  perfil.appendChild(nome);
 
   link.replaceWith(perfil);
 })();

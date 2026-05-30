@@ -1,6 +1,5 @@
-const TAPAS_API = 'api/tapas.php';
-const SLAPPED_KEY = 'carecai_slapped';
-const ICONE = { careca: 'TP', calvo: 'MQ' };
+const TAPAS_API = 'api/interacoes.php';
+const ICONE  = { careca: '👋', calvo: '🪒' };
 const ROTULO = { careca: 'tapas', calvo: 'maquinadas' };
 
 let todasFotos = [];
@@ -10,23 +9,6 @@ function escapeHtml(value) {
   const element = document.createElement('span');
   element.textContent = String(value ?? '');
   return element.innerHTML;
-}
-
-function getSlapped() {
-  try { return JSON.parse(localStorage.getItem(SLAPPED_KEY) || '[]'); }
-  catch { return []; }
-}
-
-function markSlapped(id) {
-  const list = getSlapped();
-  if (!list.includes(id)) {
-    list.push(id);
-    localStorage.setItem(SLAPPED_KEY, JSON.stringify(list));
-  }
-}
-
-function hasSlapped(id) {
-  return getSlapped().includes(id);
 }
 
 function spawnEmoji(x, y, container, tipo) {
@@ -47,24 +29,32 @@ async function onInteracao(event, id, tipo) {
   spawnEmoji(event.clientX - rect.left, event.clientY - rect.top, fotoElement, tipo);
   fotoElement.classList.add('slapping', 'slapped');
   fotoElement.addEventListener('animationend', () => fotoElement.classList.remove('slapping'), { once: true });
-  markSlapped(id);
 
   const numberElement = document.querySelector(`#tapas-${id} .tapa-num`);
   if (numberElement) numberElement.textContent = parseInt(numberElement.textContent, 10) + 1;
 
   try {
-    await fetch(TAPAS_API, {
+    const res = await fetch(TAPAS_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ foto_id: id }),
     });
-  } catch { /* A animacao local continua mesmo se a rede oscilar. */ }
+    if (res.status === 401) {
+      // nao logado: reverte o estado visual
+      fotoElement.classList.remove('slapped');
+      if (numberElement) numberElement.textContent = parseInt(numberElement.textContent, 10) - 1;
+    }
+    if (res.status === 409) {
+      // ja havia registrado — mantém slapped, sem decrementar
+      fotoElement.classList.add('slapped');
+    }
+  } catch { /* animacao local continua */ }
 }
 
 function buildCard(foto) {
   const card = document.createElement('article');
-  const slapped = hasSlapped(foto.id);
-  const icone = ICONE[foto.tipo] || 'TP';
+  const slapped = !!foto.ja_tapou;
+  const icone = ICONE[foto.tipo] || '👋';
   const rotulo = ROTULO[foto.tipo] || 'tapas';
   const image = foto.foto || 'assets/images/placeholder.svg';
 
