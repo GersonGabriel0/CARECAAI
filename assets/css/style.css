@@ -447,13 +447,6 @@ main.login-page {
   border-radius: 12px;
 }
 
-.bald-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(91, 56, 232, .15);
-  backdrop-filter: blur(1px);
-}
-
 .btn-identificar {
   width: 100%;
   padding: 14px;
@@ -708,19 +701,6 @@ main.login-page {
   max-height: 360px;
   border-radius: 10px;
   object-fit: cover;
-}
-
-.bald-overlay {
-  position: absolute;
-  top: 4%;
-  left: 50%;
-  width: 32%;
-  height: 25%;
-  border-radius: 52% 52% 42% 42%;
-  background: rgb(210 167 132 / 92%);
-  box-shadow: inset 0 8px 16px rgb(255 224 190 / 40%);
-  transform: translateX(-50%);
-  pointer-events: none;
 }
 
 .bald-offer {

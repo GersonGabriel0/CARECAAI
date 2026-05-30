@@ -8,7 +8,6 @@ const msg         = document.querySelector('#login-message');
 const resultado   = document.querySelector('#resultado');
 const baldOffer   = document.querySelector('#bald-offer');
 const baldButton  = document.querySelector('#bald-filter-button');
-const baldOverlay = document.querySelector('#bald-overlay');
 const continueLink = document.querySelector('#continue-link');
 
 let savedFotoPath = '';
@@ -125,11 +124,9 @@ baldButton.addEventListener('click', async () => {
     }
 
     preview.src = filtro.image;
-    baldOverlay.hidden = true;
     msg.textContent = 'Upgrade aplicado: menos cabelo, mais velocidade de cruzeiro.';
   } catch (error) {
-    baldOverlay.hidden = false;
-    msg.textContent = `${error.message} Exibindo a simulacao local.`;
+    msg.textContent = `${error.message} A foto original foi mantida.`;
   } finally {
     baldButton.disabled = false;
   }

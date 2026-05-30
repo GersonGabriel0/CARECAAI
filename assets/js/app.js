@@ -6,7 +6,6 @@ const preview = document.querySelector("#analysis-preview");
 const previewImage = document.querySelector("#analysis-image");
 const baldOffer = document.querySelector("#analysis-bald-offer");
 const baldButton = document.querySelector("#analysis-bald-button");
-const baldOverlay = document.querySelector("#analysis-bald-overlay");
 
 themeButton.addEventListener("click", () => {
   const isBaldMode = document.documentElement.classList.toggle("bald-mode");
@@ -21,7 +20,6 @@ photoInput.addEventListener("change", () => {
     previewImage.src = URL.createObjectURL(file);
     preview.hidden = false;
     baldOffer.hidden = true;
-    baldOverlay.hidden = true;
   }
 });
 
@@ -77,12 +75,10 @@ baldButton.addEventListener("click", async () => {
     }
 
     previewImage.src = filtro.image;
-    baldOverlay.hidden = true;
     feedback.textContent =
       "Modo careca turbo aplicado. A imagem ja ganhou velocidade.";
   } catch (error) {
-    baldOverlay.hidden = false;
-    feedback.textContent = `${error.message} Exibindo a simulacao local.`;
+    feedback.textContent = `${error.message} A foto original foi mantida.`;
   } finally {
     baldButton.disabled = false;
   }

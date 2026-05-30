@@ -141,7 +141,7 @@ function analyzeWithGemini(array $photo, string $mimeType, array $config): array
         ],
     ];
 
-    $model = $config['model'] ?? 'gemini-2.5-flash';
+    $model = normalizeModelName($config['model'] ?? 'gemini-2.5-flash');
     $url = sprintf(
         'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent',
         rawurlencode($model)
@@ -150,10 +150,25 @@ function analyzeWithGemini(array $photo, string $mimeType, array $config): array
     [$rawResponse, $status, $requestError] = postJson($url, $payload, $config['api_key']);
 
     if ($rawResponse === false || $status >= 400) {
+        $apiError = extractApiError($rawResponse);
+
+        if ($status === 429 || str_contains(strtolower($apiError), 'quota')) {
+            $retryAfter = extractRetrySeconds($apiError);
+            respond([
+                'error' => $retryAfter > 0
+                    ? "Limite gratuito do Gemini atingido. Tente novamente em {$retryAfter} segundos."
+                    : 'Limite gratuito do Gemini atingido. Aguarde um pouco e tente novamente.',
+                'retry_after' => $retryAfter,
+            ], 429);
+        }
+
         respond([
             'error' => $requestError
+                ?: $apiError
                 ?: 'O Gemini nao conseguiu analisar a foto agora.',
-            'detail' => $requestError ?: 'Resposta HTTP ' . $status,
+            'detail' => $requestError
+                ?: $apiError
+                ?: 'Resposta HTTP ' . $status,
         ], 502);
     }
 
@@ -166,6 +181,32 @@ function analyzeWithGemini(array $photo, string $mimeType, array $config): array
     }
 
     return $analysis;
+}
+
+function extractApiError(string|false $rawResponse): string
+{
+    if (!is_string($rawResponse) || $rawResponse === '') {
+        return '';
+    }
+
+    $response = json_decode($rawResponse, true);
+    return trim((string) ($response['error']['message'] ?? ''));
+}
+
+function extractRetrySeconds(string $message): int
+{
+    if (preg_match('/retry in ([0-9.]+)s/i', $message, $matches) !== 1) {
+        return 0;
+    }
+
+    return (int) ceil((float) $matches[1]);
+}
+
+function normalizeModelName(string $model): string
+{
+    $model = strtolower(trim($model));
+    $model = preg_replace('/^models\//', '', $model);
+    return (string) preg_replace('/[^a-z0-9._-]+/', '-', $model);
 }
 
 function postJson(string $url, array $payload, string $apiKey): array

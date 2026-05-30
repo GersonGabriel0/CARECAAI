@@ -11,6 +11,32 @@ function respond(array $payload, int $status = 200): never
     exit;
 }
 
+function extractApiError(string|false $rawResponse): string
+{
+    if (!is_string($rawResponse) || $rawResponse === '') {
+        return '';
+    }
+
+    $response = json_decode($rawResponse, true);
+    return trim((string) ($response['error']['message'] ?? ''));
+}
+
+function extractRetrySeconds(string $message): int
+{
+    if (preg_match('/retry in ([0-9.]+)s/i', $message, $matches) !== 1) {
+        return 0;
+    }
+
+    return (int) ceil((float) $matches[1]);
+}
+
+function normalizeModelName(string $model): string
+{
+    $model = strtolower(trim($model));
+    $model = preg_replace('/^models\//', '', $model);
+    return (string) preg_replace('/[^a-z0-9._-]+/', '-', $model);
+}
+
 function postJson(string $url, array $payload, string $apiKey): array
 {
     $body = (string) json_encode($payload);
@@ -74,21 +100,30 @@ if (empty($config['api_key']) || $config['api_key'] === 'COLE_SUA_CHAVE_GEMINI_A
 }
 
 $fotoPath = trim($_POST['foto_path'] ?? '');
+$uploadedPhoto = $_FILES['photo'] ?? null;
 
-if ($fotoPath === '') {
-    respond(['error' => 'foto_path e obrigatorio.'], 422);
-}
+if ($uploadedPhoto && $uploadedPhoto['error'] === UPLOAD_ERR_OK) {
+    if ($uploadedPhoto['size'] > 5 * 1024 * 1024) {
+        respond(['error' => 'A imagem deve ter no maximo 5 MB.'], 422);
+    }
 
-// impede path traversal
-$realBase = realpath(__DIR__ . '/../assets/images/perfil');
-$realFile = realpath(__DIR__ . '/../' . $fotoPath);
+    $realFile = $uploadedPhoto['tmp_name'];
+} else {
+    if ($fotoPath === '') {
+        respond(['error' => 'Envie uma foto ou informe foto_path.'], 422);
+    }
 
-if ($realFile === false || $realBase === false || !str_starts_with($realFile, $realBase)) {
-    respond(['error' => 'Caminho de imagem invalido.'], 403);
-}
+    // Impede path traversal quando a foto ja foi salva pelo login.
+    $realBase = realpath(__DIR__ . '/../assets/images/perfil');
+    $realFile = realpath(__DIR__ . '/../' . $fotoPath);
 
-if (!is_file($realFile)) {
-    respond(['error' => 'Imagem de perfil nao encontrada. Faca o login novamente.'], 404);
+    if ($realFile === false || $realBase === false || !str_starts_with($realFile, $realBase)) {
+        respond(['error' => 'Caminho de imagem invalido.'], 403);
+    }
+
+    if (!is_file($realFile)) {
+        respond(['error' => 'Imagem de perfil nao encontrada. Faca o login novamente.'], 404);
+    }
 }
 
 $imageInfo = getimagesize($realFile);
@@ -104,7 +139,7 @@ $payload = [
     'contents' => [[
         'parts' => [
             [
-                'text' => 'Esta e uma foto de perfil. Aplique um filtro que remove visualmente o cabelo da pessoa, simulando uma careca. Mantenha o rosto e o restante da imagem. Retorne apenas a imagem editada.',
+                'text' => 'Edite a foto inteira enviada. Mantenha exatamente a mesma pessoa, rosto, expressao, pose, enquadramento, roupa, fundo, iluminacao e proporcao da imagem original. Altere somente o cabelo: remova visualmente o cabelo do topo da cabeca e produza uma aparencia careca ou calva natural. Retorne a foto inteira editada, nunca um recorte e nunca um borrao.',
             ],
             [
                 'inline_data' => [
@@ -114,9 +149,12 @@ $payload = [
             ],
         ],
     ]],
+    'generationConfig' => [
+        'responseModalities' => ['Image'],
+    ],
 ];
 
-$model = $config['image_model'] ?? 'gemini-2.5-flash-image';
+$model = normalizeModelName($config['image_model'] ?? 'gemini-2.5-flash-image');
 $url = sprintf(
     'https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent',
     rawurlencode($model)
@@ -124,10 +162,25 @@ $url = sprintf(
 [$rawResponse, $status, $requestError] = postJson($url, $payload, $config['api_key']);
 
 if ($rawResponse === false || $status >= 400) {
+    $apiError = extractApiError($rawResponse);
+
+    if ($status === 429 || str_contains(strtolower($apiError), 'quota')) {
+        $retryAfter = extractRetrySeconds($apiError);
+        respond([
+            'error' => $retryAfter > 0
+                ? "Limite gratuito do Gemini atingido. Tente novamente em {$retryAfter} segundos."
+                : 'Limite gratuito do Gemini atingido. Aguarde um pouco e tente novamente.',
+            'retry_after' => $retryAfter,
+        ], 429);
+    }
+
     respond([
         'error' => $requestError
+            ?: $apiError
             ?: 'O filtro por IA nao ficou disponivel agora.',
-        'detail' => $requestError ?: 'Resposta HTTP ' . $status,
+        'detail' => $requestError
+            ?: $apiError
+            ?: 'Resposta HTTP ' . $status,
     ], 502);
 }
 
