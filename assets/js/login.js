@@ -9,6 +9,8 @@ const resultado   = document.querySelector('#resultado');
 const baldOffer   = document.querySelector('#bald-offer');
 const baldButton  = document.querySelector('#bald-filter-button');
 const continueLink = document.querySelector('#continue-link');
+const analysisProvider = document.querySelector('#analysis-provider');
+const filterProvider = document.querySelector('#filter-provider');
 
 let savedFotoPath = '';
 
@@ -62,6 +64,7 @@ form.addEventListener('submit', async (event) => {
   const formData = new FormData();
   formData.append('usuario', usuario);
   formData.append('photo', photoInput.files[0]);
+  formData.append('provider', analysisProvider.value);
 
   let analise;
 
@@ -111,6 +114,7 @@ baldButton.addEventListener('click', async () => {
 
   const formData = new FormData();
   formData.append('foto_path', savedFotoPath);
+  formData.append('provider', filterProvider.value);
 
   try {
     const response = await fetch('api/aplicar-filtro.php', {

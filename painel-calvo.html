@@ -6,67 +6,100 @@
     <title>Painel Calvo | CarecAI</title>
     <link rel="stylesheet" href="assets/css/style.css">
   </head>
-  <body>
+  <body class="result-page result-page--calvo">
     <header class="site-header">
       <a class="brand" href="index.html">Carec<span>AI</span></a>
-
       <nav aria-label="Navegacao principal">
-        <a href="analise.html">Analisar</a>
         <a href="galeria.html">Galeria</a>
         <a href="ranking.html">Ranking</a>
       </nav>
-
-      <div class="header-actions">
-        <button class="theme-button" id="sair-btn" type="button">Sair</button>
-      </div>
+      <button class="theme-button" id="sair-btn" type="button">Sair</button>
     </header>
 
-    <main>
-      <section class="painel-hero painel-hero--calvo">
-        <p class="eyebrow">CALVO EM EVOLUCAO</p>
-        <h1>Vai chegar lá, <span id="painel-nome">Calvo</span>!</h1>
-        <p>Voce esta no caminho certo. Sua calvicie esta evoluindo.</p>
+    <main class="result-main">
+      <section class="result-shell result-shell--calvo">
+        <header class="result-shell-header">
+          <div>
+            <p class="eyebrow">RELATORIO DE EVOLUCAO CAPILAR</p>
+            <h1>Futuro brilhante, <span id="painel-nome">Calvo</span></h1>
+          </div>
+          <span class="analysis-status analysis-status--calvo">Calvicie em progresso</span>
+        </header>
 
-        <div class="painel-score-wrap">
-          <span class="painel-score" id="painel-score">--</span>
-          <span class="painel-score-label">pontos de calvo</span>
+        <div class="result-dashboard">
+          <article class="result-photo-card result-photo-card--calvo">
+            <img alt="Foto analisada" class="result-photo" id="painel-foto" hidden>
+            <div class="result-photo-placeholder" id="painel-foto-placeholder">
+              <strong>OBRA EM ANDAMENTO</strong>
+              <span>A pista ainda esta liberando espaco</span>
+            </div>
+            <div class="ranking-overlay ranking-overlay--calvo">
+              <span>Posicao na jornada</span>
+              <strong><b id="painel-score">--</b></strong>
+              <small>pontos rumo ao brilho total</small>
+            </div>
+          </article>
+
+          <div class="metric-grid" id="metric-grid">
+            <!-- renderizado pelo painel.js -->
+          </div>
         </div>
 
-        <div class="progresso-wrap">
+        <div class="calvo-progress">
+          <div>
+            <span>Evolucao para Careca Elite</span>
+            <strong><b id="faltam">--</b> pts restantes</strong>
+          </div>
           <div class="progresso-bar">
             <div class="progresso-fill" id="progresso-fill"></div>
           </div>
-          <p class="progresso-texto">
-            Faltam <strong id="faltam">--</strong> pts para ser promovido a Careca Elite
-          </p>
         </div>
 
-        <div class="painel-badge painel-badge--calvo">🌱 Aspirante Craniano</div>
+        <article class="diagnosis-card diagnosis-card--calvo">
+          <span class="diagnosis-icon">🌱</span>
+          <div>
+            <small>Diagnostico da IA</small>
+            <h2 id="diagnosis-titulo">Analisando resultado...</h2>
+            <p id="diagnosis-texto"></p>
+          </div>
+        </article>
       </section>
 
-      <section class="features">
-        <h2>O que fazer agora</h2>
-        <div class="card-grid">
-          <a class="card card-link" href="analise.html">
-            <h3>Tentar de novo</h3>
-            <p>Envie outra foto. Talvez hoje sua careca brilhe mais.</p>
+      <section class="result-resources">
+        <header>
+          <h2>🪒 Seu plano de <span>desocupacao capilar</span></h2>
+          <p>Ferramentas para acelerar o processo evolutivo</p>
+        </header>
+        <div class="resource-grid">
+          <a class="resource-card" href="galeria.html">
+            <b>🪒</b>
+            <div>
+              <h3>Galeria de maquinadas</h3>
+              <p>Inspire-se nos que ja completaram a jornada craniana.</p>
+              <span>Buscar inspiracao</span>
+            </div>
           </a>
-          <a class="card card-link" href="galeria.html">
-            <h3>Galeria de tapas</h3>
-            <p>Tape as carecas alheias enquanto a sua nao chega la.</p>
+          <a class="resource-card" href="ranking.html">
+            <b>🌱</b>
+            <div>
+              <h3>Ranking de aspirantes</h3>
+              <p>Veja onde voce esta na fila da evolucao. Spoiler: subindo.</p>
+              <span>Ver ranking</span>
+            </div>
           </a>
-          <a class="card card-link" href="ranking.html">
-            <h3>Ranking</h3>
-            <p>Veja quanta gente ja passou por voce.</p>
+          <a class="resource-card" href="login.html">
+            <b>⏰</b>
+            <div>
+              <h3>Esperar a natureza</h3>
+              <p>Ou pegar uma maquina zero. O resultado e o mesmo, so muda o prazo.</p>
+              <span>Analisar novamente</span>
+            </div>
           </a>
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>CarecAI - Ciencia avancada para superficies brilhantes.</p>
-    </footer>
-
+    <footer><p>CarecAI &mdash; Ciencia avancada para superficies em transicao.</p></footer>
     <script src="assets/js/painel.js"></script>
   </body>
 </html>

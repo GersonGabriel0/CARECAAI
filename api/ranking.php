@@ -33,35 +33,19 @@ try {
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $query = $pdo->query(
-        'SELECT u.usuario, u.tipo, r.name, r.score
-         FROM rankings r
-         JOIN usuarios u ON u.id = r.usuario_id
-         ORDER BY r.score DESC
-         LIMIT 20'
+        'SELECT u.usuario, u.tipo, u.score, COALESCE(f.arquivo, "") AS foto
+         FROM usuarios u
+         LEFT JOIN fotos f ON f.id = (
+             SELECT f2.id
+             FROM fotos f2
+             WHERE f2.usuario_id = u.id
+             ORDER BY f2.created_at DESC, f2.id DESC
+             LIMIT 1
+         )
+         ORDER BY u.score DESC, u.usuario ASC
+         LIMIT 100'
     );
     echo json_encode($query->fetchAll());
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $payload    = json_decode(file_get_contents('php://input'), true);
-    $usuarioId  = filter_var($payload['usuario_id'] ?? null, FILTER_VALIDATE_INT);
-    $name       = trim((string) ($payload['name'] ?? ''));
-    $score      = filter_var($payload['score'] ?? null, FILTER_VALIDATE_INT);
-
-    if (!$usuarioId || $name === '' || mb_strlen($name) > 80 || $score === false || $score < 0 || $score > 100) {
-        http_response_code(422);
-        echo json_encode(['error' => 'Informe usuario_id, nome e pontuacao entre 0 e 100.']);
-        exit;
-    }
-
-    $stmt = $pdo->prepare(
-        'INSERT INTO rankings (usuario_id, name, score) VALUES (:usuario_id, :name, :score)'
-    );
-    $stmt->execute(['usuario_id' => $usuarioId, 'name' => $name, 'score' => $score]);
-
-    http_response_code(201);
-    echo json_encode(['message' => 'Resultado cadastrado com sucesso.']);
     exit;
 }
 

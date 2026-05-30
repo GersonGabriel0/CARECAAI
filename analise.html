@@ -16,7 +16,6 @@
 
       <nav aria-label="Navegacao principal">
         <a href="index.html">Inicio</a>
-        <a href="analise.html" aria-current="page">Analisar</a>
         <a href="galeria.html">Galeria</a>
         <a href="ranking.html">Ranking</a>
       </nav>
@@ -41,6 +40,22 @@
           <strong>Escolher foto</strong>
           <span>JPG, PNG ou WEBP</span>
         </label>
+        <div class="provider-grid provider-grid--analysis">
+          <label class="input-label">
+            IA para analisar
+            <select id="analysis-provider">
+              <option value="gemini">Gemini Lite</option>
+              <option value="xai">Grok</option>
+            </select>
+          </label>
+          <label class="input-label">
+            IA para aplicar filtro
+            <select id="filter-provider">
+              <option value="xai">Grok Imagine</option>
+              <option value="gemini">Gemini Image</option>
+            </select>
+          </label>
+        </div>
         <input accept="image/*" id="photo" type="file">
         <div class="analysis-preview" id="analysis-preview" hidden>
           <img alt="Preview da foto enviada" id="analysis-image">
@@ -64,6 +79,7 @@
       <p>CarecAI - Ciencia avancada para superficies brilhantes.</p>
     </footer>
 
+    <script src="assets/js/nav.js"></script>
     <script src="assets/js/app.js"></script>
   </body>
 </html>

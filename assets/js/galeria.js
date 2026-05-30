@@ -1,21 +1,16 @@
-const TAPAS_API  = 'api/tapas.php';
+const TAPAS_API = 'api/tapas.php';
 const SLAPPED_KEY = 'carecai_slapped';
-
-const MOCK_FOTOS = [
-  { id: 1, usuario: 'gerson',        score: 97, tapas: 42, tipo: 'careca' },
-  { id: 2, usuario: 'gui',           score: 89, tapas: 31, tipo: 'careca' },
-  { id: 3, usuario: 'kety',          score: 72, tapas: 18, tipo: 'calvo'  },
-  { id: 4, usuario: 'thomaz',        score: 34, tapas: 7,  tipo: 'calvo'  },
-  { id: 5, usuario: 'gabriel_nunes', score: 95, tapas: 38, tipo: 'careca' },
-  { id: 6, usuario: 'giokozz',       score: 88, tapas: 25, tipo: 'careca' },
-  { id: 7, usuario: 'lojhan',        score: 61, tapas: 12, tipo: 'calvo'  },
-];
-
-const ICONE   = { careca: '👋', calvo: '🪒' };
-const ROTULO  = { careca: 'tapas', calvo: 'maquinadas' };
+const ICONE = { careca: 'TP', calvo: 'MQ' };
+const ROTULO = { careca: 'tapas', calvo: 'maquinadas' };
 
 let todasFotos = [];
 let filtroAtivo = 'todos';
+
+function escapeHtml(value) {
+  const element = document.createElement('span');
+  element.textContent = String(value ?? '');
+  return element.innerHTML;
+}
 
 function getSlapped() {
   try { return JSON.parse(localStorage.getItem(SLAPPED_KEY) || '[]'); }
@@ -35,32 +30,27 @@ function hasSlapped(id) {
 }
 
 function spawnEmoji(x, y, container, tipo) {
-  const el = document.createElement('span');
-  el.className = 'tapa-hand';
-  el.textContent = ICONE[tipo] || '👋';
-  el.style.left = `${x}px`;
-  el.style.top  = `${y}px`;
-  container.appendChild(el);
-  el.addEventListener('animationend', () => el.remove());
+  const element = document.createElement('span');
+  element.className = 'tapa-hand';
+  element.textContent = ICONE[tipo] || 'TP';
+  element.style.left = `${x}px`;
+  element.style.top = `${y}px`;
+  container.appendChild(element);
+  element.addEventListener('animationend', () => element.remove());
 }
 
-async function onInteracao(e, id, tipo) {
-  const fotoEl = e.currentTarget;
-  if (fotoEl.classList.contains('slapped')) return;
+async function onInteracao(event, id, tipo) {
+  const fotoElement = event.currentTarget;
+  if (fotoElement.classList.contains('slapped')) return;
 
-  const rect = fotoEl.getBoundingClientRect();
-  spawnEmoji(e.clientX - rect.left, e.clientY - rect.top, fotoEl, tipo);
-
-  fotoEl.classList.add('slapping', 'slapped');
-  fotoEl.addEventListener('animationend', () => fotoEl.classList.remove('slapping'), { once: true });
+  const rect = fotoElement.getBoundingClientRect();
+  spawnEmoji(event.clientX - rect.left, event.clientY - rect.top, fotoElement, tipo);
+  fotoElement.classList.add('slapping', 'slapped');
+  fotoElement.addEventListener('animationend', () => fotoElement.classList.remove('slapping'), { once: true });
   markSlapped(id);
 
-  const numEl = document.querySelector(`#tapas-${id} .tapa-num`);
-  if (numEl) {
-    numEl.textContent = parseInt(numEl.textContent, 10) + 1;
-    numEl.classList.add('tapa-bounce');
-    numEl.addEventListener('animationend', () => numEl.classList.remove('tapa-bounce'), { once: true });
-  }
+  const numberElement = document.querySelector(`#tapas-${id} .tapa-num`);
+  if (numberElement) numberElement.textContent = parseInt(numberElement.textContent, 10) + 1;
 
   try {
     await fetch(TAPAS_API, {
@@ -68,40 +58,35 @@ async function onInteracao(e, id, tipo) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ foto_id: id }),
     });
-  } catch { /* contador ja atualizado localmente */ }
+  } catch { /* A animacao local continua mesmo se a rede oscilar. */ }
 }
 
 function buildCard(foto) {
-  const slapped = hasSlapped(foto.id);
-  const icone   = ICONE[foto.tipo]  || '👋';
-  const rotulo  = ROTULO[foto.tipo] || 'tapas';
-
   const card = document.createElement('article');
+  const slapped = hasSlapped(foto.id);
+  const icone = ICONE[foto.tipo] || 'TP';
+  const rotulo = ROTULO[foto.tipo] || 'tapas';
+  const image = foto.foto || 'assets/images/placeholder.svg';
+
   card.className = `galeria-card galeria-card--${foto.tipo}`;
   card.dataset.tipo = foto.tipo;
-
   card.innerHTML = `
     <div class="galeria-foto${slapped ? ' slapped' : ''}" data-id="${foto.id}">
-      <img
-        src="https://picsum.photos/seed/${foto.usuario}/400/400"
-        alt="Foto de ${foto.usuario}"
-        loading="lazy"
-      >
-      <div class="score-badge">${foto.score}</div>
-      <div class="tipo-badge tipo-badge--${foto.tipo}">
-        ${foto.tipo === 'careca' ? '🏆 Careca' : '🌱 Calvo'}
+      <img src="${escapeHtml(image)}" alt="Foto de ${escapeHtml(foto.usuario)}" loading="lazy">
+      <div class="score-badge">${escapeHtml(foto.score)}</div>
+      <div class="tipo-badge tipo-badge--${escapeHtml(foto.tipo)}">
+        ${foto.tipo === 'careca' ? 'Careca Elite' : 'Calvo em evolucao'}
       </div>
     </div>
     <div class="galeria-info">
-      <strong class="galeria-usuario">@${foto.usuario}</strong>
+      <strong class="galeria-usuario">@${escapeHtml(foto.usuario)}</strong>
       <span class="tapa-counter" id="tapas-${foto.id}">
-        ${icone} <span class="tapa-num">${foto.tapas}</span> ${rotulo}
+        ${icone} <span class="tapa-num">${escapeHtml(foto.tapas)}</span> ${rotulo}
       </span>
-    </div>
-  `;
+    </div>`;
 
-  card.querySelector('.galeria-foto').addEventListener('click', (e) =>
-    onInteracao(e, foto.id, foto.tipo)
+  card.querySelector('.galeria-foto').addEventListener('click', (event) =>
+    onInteracao(event, foto.id, foto.tipo)
   );
   return card;
 }
@@ -110,35 +95,39 @@ function aplicarFiltro() {
   const grid = document.querySelector('#galeria-grid');
   const filtradas = filtroAtivo === 'todos'
     ? todasFotos
-    : todasFotos.filter((f) => f.tipo === filtroAtivo);
+    : todasFotos.filter((foto) => foto.tipo === filtroAtivo);
 
   grid.innerHTML = '';
 
   if (!filtradas.length) {
-    grid.innerHTML = '<p class="galeria-loading">Nenhuma foto nessa categoria ainda.</p>';
+    grid.innerHTML = '<p class="galeria-loading">Nenhuma foto cadastrada ainda.</p>';
     return;
   }
 
   filtradas.forEach((foto) => grid.appendChild(buildCard(foto)));
 }
 
-// TODO: substituir por fetch(TAPAS_API) quando o banco estiver configurado
-function loadGaleria() {
-  todasFotos = MOCK_FOTOS;
-  aplicarFiltro();
+async function loadGaleria() {
+  try {
+    const response = await fetch(TAPAS_API);
+    if (!response.ok) throw new Error();
+    todasFotos = await response.json();
+    aplicarFiltro();
+  } catch {
+    document.querySelector('#galeria-grid').innerHTML =
+      '<p class="galeria-loading">Nao foi possivel carregar a galeria.</p>';
+  }
 }
 
-// Filtros
-document.querySelectorAll('.filtro-btn').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filtro-btn').forEach((b) => b.classList.remove('active'));
-    btn.classList.add('active');
-    filtroAtivo = btn.dataset.tipo;
+document.querySelectorAll('.filtro-btn').forEach((button) => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('.filtro-btn').forEach((item) => item.classList.remove('active'));
+    button.classList.add('active');
+    filtroAtivo = button.dataset.tipo;
     aplicarFiltro();
   });
 });
 
-// Bald Mode
 const themeButton = document.querySelector('#theme-button');
 themeButton.addEventListener('click', () => {
   const isBaldMode = document.documentElement.classList.toggle('bald-mode');

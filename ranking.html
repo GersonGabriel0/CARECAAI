@@ -3,10 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta
-      name="description"
-      content="Ranking das melhores carecas do CarecAI."
-    >
+    <meta name="description" content="Ranking das melhores carecas do CarecAI.">
     <title>Ranking | CarecAI</title>
     <link rel="stylesheet" href="assets/css/style.css">
   </head>
@@ -16,7 +13,6 @@
 
       <nav aria-label="Navegacao principal">
         <a href="index.html">Inicio</a>
-        <a href="analise.html">Analisar</a>
         <a href="galeria.html">Galeria</a>
         <a href="ranking.html" aria-current="page">Ranking</a>
       </nav>
@@ -29,35 +25,54 @@
       </div>
     </header>
 
-    <main>
-      <section class="ranking" id="ranking">
-        <h2>Ranking</h2>
+    <main class="ranking-page">
+
+      <div class="ranking-hero">
+        <p class="eyebrow">HALL DA FAMA CRANIANA</p>
+        <h1>Ranking de <span>Carecas</span></h1>
         <p>Carecas de um lado, calvos do outro. Cada um no seu lugar.</p>
+      </div>
 
-        <div class="ranking-split">
-          <div class="ranking-lado ranking-lado--careca">
-            <h3>🏆 Carecas Elite</h3>
-            <ol id="ranking-carecas">
-              <li>Carregando...</li>
-            </ol>
+      <div class="ranking-split">
+
+        <div class="ranking-lado ranking-lado--careca">
+          <div class="ranking-lado-header">
+            <span class="ranking-lado-emoji">🏆</span>
+            <div>
+              <h2 class="ranking-lado-titulo">Carecas Elite</h2>
+              <p class="ranking-lado-sub">Score &ge; 80 pts</p>
+            </div>
           </div>
-
-          <div class="ranking-divisor"></div>
-
-          <div class="ranking-lado ranking-lado--calvo">
-            <h3>🌱 Calvos em Evolucao</h3>
-            <ol id="ranking-calvos">
-              <li>Carregando...</li>
-            </ol>
-          </div>
+          <ol class="ranking-lista" id="ranking-carecas">
+            <li class="ranking-item ranking-skeleton"></li>
+            <li class="ranking-item ranking-skeleton"></li>
+            <li class="ranking-item ranking-skeleton"></li>
+          </ol>
         </div>
-      </section>
+
+        <div class="ranking-lado ranking-lado--calvo">
+          <div class="ranking-lado-header">
+            <span class="ranking-lado-emoji">🌱</span>
+            <div>
+              <h2 class="ranking-lado-titulo">Calvos em Evolucao</h2>
+              <p class="ranking-lado-sub">Score &lt; 80 pts</p>
+            </div>
+          </div>
+          <ol class="ranking-lista" id="ranking-calvos">
+            <li class="ranking-item ranking-skeleton"></li>
+            <li class="ranking-item ranking-skeleton"></li>
+            <li class="ranking-item ranking-skeleton"></li>
+          </ol>
+        </div>
+
+      </div>
     </main>
 
     <footer>
-      <p>CarecAI - Ciencia avancada para superficies brilhantes.</p>
+      <p>CarecAI &mdash; Ciencia avancada para superficies brilhantes.</p>
     </footer>
 
+    <script src="assets/js/nav.js"></script>
     <script src="assets/js/ranking.js"></script>
   </body>
 </html>

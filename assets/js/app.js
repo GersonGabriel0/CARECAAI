@@ -6,6 +6,8 @@ const preview = document.querySelector("#analysis-preview");
 const previewImage = document.querySelector("#analysis-image");
 const baldOffer = document.querySelector("#analysis-bald-offer");
 const baldButton = document.querySelector("#analysis-bald-button");
+const analysisProvider = document.querySelector("#analysis-provider");
+const filterProvider = document.querySelector("#filter-provider");
 
 themeButton.addEventListener("click", () => {
   const isBaldMode = document.documentElement.classList.toggle("bald-mode");
@@ -34,6 +36,7 @@ analyzeButton.addEventListener("click", async () => {
 
   const formData = new FormData();
   formData.append("photo", photoInput.files[0]);
+  formData.append("provider", analysisProvider.value);
 
   try {
     const response = await fetch("api/analisar.php", {
@@ -62,6 +65,7 @@ baldButton.addEventListener("click", async () => {
 
   const formData = new FormData();
   formData.append("photo", photoInput.files[0]);
+  formData.append("provider", filterProvider.value);
 
   try {
     const response = await fetch("api/aplicar-filtro.php", {

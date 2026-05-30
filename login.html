@@ -19,7 +19,7 @@
         <a class="brand brand--white" href="index.html">Carec<span>AI</span></a>
 
         <div class="login-branding-content">
-          <h2>Sem senha.<br>So careca.</h2>
+          <h2>Sem senha.<br>Só careca ou Calvo.</h2>
           <p>Envie sua foto. O sistema analisa e classifica sua careca em segundos.</p>
 
           <ul class="login-features-list">
@@ -58,6 +58,23 @@
                 type="text"
               >
             </label>
+
+            <div class="provider-grid">
+              <label class="input-label">
+                IA para analisar
+                <select id="analysis-provider" name="analysis_provider">
+                  <option value="gemini">Gemini Lite</option>
+                  <option value="xai">Grok</option>
+                </select>
+              </label>
+              <label class="input-label">
+                IA para aplicar filtro
+                <select id="filter-provider" name="filter_provider">
+                  <option value="xai">Grok Imagine</option>
+                  <option value="gemini">Gemini Image</option>
+                </select>
+              </label>
+            </div>
 
             <label class="upload-area upload-area--login" id="upload-label" for="photo-login">
               <span class="upload-icon">📷</span>

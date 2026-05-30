@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#eeeaff"/>
+      <stop offset="1" stop-color="#d7cdfd"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <circle cx="200" cy="154" r="78" fill="#bd9478"/>
+  <path fill="#8f6b58" d="M118 148c0-68 36-105 82-105s82 37 82 105c-17-34-44-50-82-50s-65 16-82 50Z"/>
+  <path fill="#5b38e8" d="M70 400c9-105 58-158 130-158s121 53 130 158Z"/>
+  <text x="200" y="352" fill="#fff" font-family="Arial, sans-serif" font-size="22" font-weight="700" text-anchor="middle">CAREC AI</text>
+</svg>

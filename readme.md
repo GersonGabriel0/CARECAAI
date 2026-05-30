@@ -38,9 +38,10 @@ CARECA/
     config/
       database-example.php   Modelo de configuracao local
       gemini-example.php     Modelo da chave da API Gemini
+      xai-example.php        Modelo da chave da API xAI
     analisar.php             Analise da foto com Gemini e login
-    aplicar-filtro.php       Edicao careca da foto com Gemini
-    ranking.php              GET e POST do ranking
+    aplicar-filtro.php       Edicao careca da foto com xAI
+    ranking.php              Ranking dinamico dos usuarios cadastrados
     tapas.php                GET fotos com contagem e POST tapa
   assets/
     css/
@@ -49,8 +50,9 @@ CARECA/
     js/
       index.js               Bald Mode da landing
       app.js                 Upload e analise com Gemini
-      ranking.js             Consumo da API de ranking
-      galeria.js             Galeria de tapas e animacoes
+      ranking.js             Ranking, fotos e frases aleatorias do JSON
+      galeria.js             Galeria dinamica de tapas e animacoes
+      json_textos.json       Frases de zoeira por classificacao
       login.js               Login por foto conectado ao PHP
   database/
     schema.sql               Banco, tabelas e dados de teste
@@ -70,7 +72,9 @@ CARECA/
 5. Ajuste as credenciais no arquivo criado.
 6. Copie `api/config/gemini-example.php` para `api/config/gemini.php`.
 7. Informe sua chave da API Gemini no arquivo criado.
-8. Abra o projeto no navegador.
+8. Copie `api/config/xai-example.php` para `api/config/xai.php`.
+9. Informe sua chave da API xAI no arquivo criado.
+10. Abra o projeto no navegador.
 
 Exemplo com o servidor embutido do PHP:
 
@@ -85,15 +89,17 @@ Depois acesse:
 http://localhost:8000
 ```
 
-Nunca envie `api/config/database.php` ou `api/config/gemini.php` para o GitHub.
+Nunca envie `api/config/database.php`, `api/config/gemini.php` ou
+`api/config/xai.php` para o GitHub.
 
 ## Estado atual
 
 - Pagina inicial responsiva.
 - Upload de imagem analisado pelo Gemini.
+- Seletor de IA: Gemini ou Grok para analise e para o filtro.
 - Bald Mode propositalmente dificil de ler.
 - Login por usuario e foto integrado ao PHP/MySQL.
-- Endpoint PHP do ranking com listagem e cadastro.
+- Ranking e galeria alimentados pelos usuarios cadastrados.
 - Script SQL para criar a tabela `rankings`.
 
 ## Proximas entregas

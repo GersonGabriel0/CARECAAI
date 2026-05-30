@@ -1,43 +1,87 @@
+const RANKING_API = 'api/ranking.php';
+const TEXTOS_URL = 'assets/js/json_textos.json';
+const MEDALHAS = ['1', '2', '3'];
+
 const themeButton = document.querySelector('#theme-button');
 themeButton.addEventListener('click', () => {
   const isBaldMode = document.documentElement.classList.toggle('bald-mode');
   themeButton.textContent = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
 });
 
-// TODO: substituir por fetch('api/ranking.php') quando o banco estiver configurado
-const DADOS_RANKING = [
-  { name: 'Gerson O Cara Brilhante',    usuario: 'gerson',        score: 97, tipo: 'careca' },
-  { name: 'Gabriel Nunes Careca Total', usuario: 'gabriel_nunes', score: 95, tipo: 'careca' },
-  { name: 'Giokozz Careca Ofuscante',   usuario: 'giokozz',       score: 88, tipo: 'careca' },
-  { name: 'Gui Caveira de Luz',         usuario: 'gui',           score: 89, tipo: 'careca' },
-  { name: 'Kety Reflexo Solar',         usuario: 'kety',          score: 72, tipo: 'calvo'  },
-  { name: 'Lojhan Calvo Aspirante',     usuario: 'lojhan',        score: 61, tipo: 'calvo'  },
-  { name: 'Thomaz Primeiro Fio Caindo', usuario: 'thomaz',        score: 34, tipo: 'calvo'  },
-];
+function escapeHtml(value) {
+  const element = document.createElement('span');
+  element.textContent = String(value ?? '');
+  return element.innerHTML;
+}
 
-function renderLado(data, elementId) {
+function escolherFrase(textos, item) {
+  const opcoes = textos[item.tipo] || [];
+  if (!opcoes.length) return 'Superficie craniana sob observacao.';
+
+  return opcoes[Math.floor(Math.random() * opcoes.length)].titulo;
+}
+
+function renderLado(data, elementId, textos) {
   const list = document.querySelector(`#${elementId}`);
+
   if (!data.length) {
-    list.innerHTML = '<li class="ranking-item ranking-vazio">Nenhum resultado ainda.</li>';
+    list.innerHTML = '<li class="ranking-vazio">Nenhum usuario cadastrado ainda.</li>';
     return;
   }
+
   list.innerHTML = data
-    .map(
-      (item, i) => `
+    .map((item, index) => {
+      const posicao = MEDALHAS[index] || `${index + 1}`;
+      const foto = item.foto || 'assets/images/placeholder.svg';
+      const frase = escolherFrase(textos, item);
+
+      return `
         <li class="ranking-item">
-          <span class="ranking-pos">${i + 1}</span>
-          <span class="ranking-nome">
-            ${item.name}
-            <small>@${item.usuario}</small>
-          </span>
-          <span class="ranking-score">${item.score} pts</span>
-        </li>`
-    )
+          <span class="ranking-pos">${posicao}</span>
+          <img class="ranking-avatar" src="${escapeHtml(foto)}" alt="Foto de ${escapeHtml(item.usuario)}">
+          <div class="ranking-info">
+            <strong class="ranking-nome">${escapeHtml(item.usuario)}</strong>
+            <small>@${escapeHtml(item.usuario)}</small>
+            <em class="ranking-frase">${escapeHtml(frase)}</em>
+          </div>
+          <div class="ranking-score-wrap">
+            <span class="ranking-score">${escapeHtml(item.score)} pts</span>
+            <div class="ranking-bar">
+              <div class="ranking-bar-fill" style="width:${Number(item.score)}%"></div>
+            </div>
+          </div>
+        </li>`;
+    })
     .join('');
 }
 
-const carecas = DADOS_RANKING.filter((d) => d.tipo === 'careca').sort((a, b) => b.score - a.score);
-const calvos  = DADOS_RANKING.filter((d) => d.tipo === 'calvo').sort((a, b) => b.score - a.score);
+async function loadRanking() {
+  try {
+    const [rankingResponse, textosResponse] = await Promise.all([
+      fetch(RANKING_API),
+      fetch(TEXTOS_URL),
+    ]);
 
-renderLado(carecas, 'ranking-carecas');
-renderLado(calvos,  'ranking-calvos');
+    if (!rankingResponse.ok || !textosResponse.ok) {
+      throw new Error('Nao foi possivel carregar o ranking.');
+    }
+
+    const [ranking, textos] = await Promise.all([
+      rankingResponse.json(),
+      textosResponse.json(),
+    ]);
+
+    const carecas = ranking.filter((item) => item.tipo === 'careca');
+    const calvos = ranking.filter((item) => item.tipo === 'calvo');
+
+    renderLado(carecas, 'ranking-carecas', textos);
+    renderLado(calvos, 'ranking-calvos', textos);
+  } catch (error) {
+    document.querySelector('#ranking-carecas').innerHTML =
+      `<li class="ranking-vazio">${escapeHtml(error.message)}</li>`;
+    document.querySelector('#ranking-calvos').innerHTML =
+      '<li class="ranking-vazio">Confira a conexao com o banco.</li>';
+  }
+}
+
+loadRanking();

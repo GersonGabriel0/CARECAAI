@@ -33,12 +33,18 @@ try {
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $query = $pdo->query(
-        'SELECT f.id, u.usuario, u.tipo, f.score, COUNT(t.foto_id) AS tapas
-         FROM fotos f
-         JOIN usuarios u ON u.id = f.usuario_id
+        'SELECT f.id, u.usuario, u.tipo, f.arquivo AS foto, f.score, COUNT(t.foto_id) AS tapas
+         FROM usuarios u
+         JOIN fotos f ON f.id = (
+             SELECT f2.id
+             FROM fotos f2
+             WHERE f2.usuario_id = u.id
+             ORDER BY f2.created_at DESC, f2.id DESC
+             LIMIT 1
+         )
          LEFT JOIN tapas t ON t.foto_id = f.id
-         GROUP BY f.id, u.usuario, u.tipo, f.score
-         ORDER BY tapas DESC'
+         GROUP BY f.id, u.usuario, u.tipo, f.arquivo, f.score
+         ORDER BY tapas DESC, f.score DESC'
     );
     echo json_encode($query->fetchAll());
     exit;

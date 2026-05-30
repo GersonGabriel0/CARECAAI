@@ -6,56 +6,90 @@
     <title>Painel Careca | CarecAI</title>
     <link rel="stylesheet" href="assets/css/style.css">
   </head>
-  <body class="painel-careca-body">
+  <body class="result-page result-page--careca">
     <header class="site-header">
       <a class="brand" href="index.html">Carec<span>AI</span></a>
-
       <nav aria-label="Navegacao principal">
-        <a href="analise.html">Analisar</a>
         <a href="galeria.html">Galeria</a>
         <a href="ranking.html">Ranking</a>
       </nav>
-
-      <div class="header-actions">
-        <button class="theme-button" id="sair-btn" type="button">Sair</button>
-      </div>
+      <button class="theme-button" id="sair-btn" type="button">Sair</button>
     </header>
 
-    <main>
-      <section class="painel-hero painel-hero--careca">
-        <p class="eyebrow">CARECA VERIFICADO</p>
-        <h1 id="painel-titulo">Bem-vindo, <span id="painel-nome">Careca</span>!</h1>
-        <p>Sua calvicie foi analisada e certificada pelo sistema CarecAI.</p>
-        <div class="painel-score-wrap">
-          <span class="painel-score" id="painel-score">--</span>
-          <span class="painel-score-label">pontos de careca</span>
+    <main class="result-main">
+      <section class="result-shell">
+        <header class="result-shell-header">
+          <div>
+            <p class="eyebrow">RELATORIO CRANIANO OFICIAL</p>
+            <h1>Seu resultado, <span id="painel-nome">Careca</span></h1>
+          </div>
+          <span class="analysis-status">Analise concluida</span>
+        </header>
+
+        <div class="result-dashboard">
+          <article class="result-photo-card">
+            <img alt="Foto analisada" class="result-photo" id="painel-foto" hidden>
+            <div class="result-photo-placeholder" id="painel-foto-placeholder">
+              <strong>SUPERFICIE APROVADA</strong>
+              <span>Brilho em alta resolucao</span>
+            </div>
+            <div class="ranking-overlay">
+              <span>Posicao no ranking</span>
+              <strong>Top <b id="ranking-percentual">2</b>%</strong>
+              <small>das carecas analisadas</small>
+            </div>
+          </article>
+
+          <div class="metric-grid" id="metric-grid">
+            <!-- renderizado pelo painel.js -->
+          </div>
         </div>
-        <div class="painel-badge">🏆 Elite Craniana</div>
+
+        <article class="diagnosis-card">
+          <span class="diagnosis-icon">✨</span>
+          <div>
+            <small>Diagnostico da IA</small>
+            <h2 id="diagnosis-titulo">Analisando resultado...</h2>
+            <p id="diagnosis-texto"></p>
+          </div>
+        </article>
       </section>
 
-      <section class="features">
-        <h2>Seus acessos</h2>
-        <div class="card-grid">
-          <a class="card card-link" href="analise.html">
-            <h3>Nova analise</h3>
-            <p>Envie outra foto e atualize sua pontuacao.</p>
+      <section class="result-resources">
+        <header>
+          <h2>🪮 Coisas que voce <span>nunca vai usar</span></h2>
+          <p>Itens essenciais para quem nao tem onde aplicar</p>
+        </header>
+        <div class="resource-grid">
+          <a class="resource-card" href="galeria.html">
+            <b>👋</b>
+            <div>
+              <h3>Galeria de tapas</h3>
+              <p>Receba o carinho que seu couro cabeludo merece.</p>
+              <span>Explorar galeria</span>
+            </div>
           </a>
-          <a class="card card-link" href="galeria.html">
-            <h3>Galeria de tapas</h3>
-            <p>Veja e tape as carecas da comunidade.</p>
+          <a class="resource-card" href="ranking.html">
+            <b>🏆</b>
+            <div>
+              <h3>Hall da fama craniana</h3>
+              <p>Veja quem brilha mais. Spoiler: provavelmente voce.</p>
+              <span>Ver ranking</span>
+            </div>
           </a>
-          <a class="card card-link" href="ranking.html">
-            <h3>Ranking</h3>
-            <p>Confira sua posicao entre as maiores carecas.</p>
+          <a class="resource-card" href="login.html">
+            <b>🪮</b>
+            <div>
+              <h3>Pente decorativo</h3>
+              <p>Compre um. Coloque na gaveta. Nunca use. Muito elegante.</p>
+              <span>Analisar novamente</span>
+            </div>
           </a>
         </div>
       </section>
     </main>
 
-    <footer>
-      <p>CarecAI - Ciencia avancada para superficies brilhantes.</p>
-    </footer>
-
+    <footer><p>CarecAI &mdash; Ciencia avancada para superficies brilhantes.</p></footer>
     <script src="assets/js/painel.js"></script>
   </body>
 </html>

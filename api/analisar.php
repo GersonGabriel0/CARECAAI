@@ -32,6 +32,23 @@ function loadGeminiConfig(): array
     return $config;
 }
 
+function loadXaiConfig(): array
+{
+    $configFile = __DIR__ . '/config/xai.php';
+
+    if (!file_exists($configFile)) {
+        respond(['error' => 'Configure api/config/xai.php antes de usar o Grok.'], 500);
+    }
+
+    $config = require $configFile;
+
+    if (empty($config['api_key']) || $config['api_key'] === 'COLE_SUA_CHAVE_XAI_AQUI') {
+        respond(['error' => 'Informe uma chave valida da API xAI.'], 500);
+    }
+
+    return $config;
+}
+
 function connectDatabase(): PDO
 {
     $configFile = __DIR__ . '/config/database.php';
@@ -183,6 +200,81 @@ function analyzeWithGemini(array $photo, string $mimeType, array $config): array
     return $analysis;
 }
 
+function analyzeWithXai(array $photo, string $mimeType, array $config): array
+{
+    $schema = [
+        'type' => 'object',
+        'properties' => [
+            'classification' => [
+                'type' => 'string',
+                'enum' => ['careca', 'calvo', 'cabelo'],
+            ],
+            'score' => ['type' => 'integer'],
+            'hair_level' => ['type' => 'integer'],
+            'baldness_level' => ['type' => 'integer'],
+            'message' => ['type' => 'string'],
+        ],
+        'required' => ['classification', 'score', 'hair_level', 'baldness_level', 'message'],
+        'additionalProperties' => false,
+    ];
+    $imageDataUri = sprintf(
+        'data:%s;base64,%s',
+        $mimeType,
+        base64_encode((string) file_get_contents($photo['tmp_name']))
+    );
+    $payload = [
+        'model' => $config['analysis_model'] ?? 'grok-4-1-fast-non-reasoning',
+        'messages' => [[
+            'role' => 'user',
+            'content' => [
+                [
+                    'type' => 'image_url',
+                    'image_url' => [
+                        'url' => $imageDataUri,
+                        'detail' => 'high',
+                    ],
+                ],
+                [
+                    'type' => 'text',
+                    'text' => 'Analise somente a quantidade visual de cabelo. Classifique como careca, calvo ou cabelo. Considere calvo quando houver pelo menos 10% de calvicie, rarefacao ou recuo da linha capilar. Retorne uma pontuacao humoristica de potencial careca entre 0 e 100 e uma mensagem curta em portugues brasileiro. Nao identifique a pessoa e nao infira dados pessoais.',
+                ],
+            ],
+        ]],
+        'response_format' => [
+            'type' => 'json_schema',
+            'json_schema' => [
+                'name' => 'carecai_analysis',
+                'strict' => true,
+                'schema' => $schema,
+            ],
+        ],
+    ];
+
+    [$rawResponse, $status, $requestError] = postXaiJson(
+        'https://api.x.ai/v1/chat/completions',
+        $payload,
+        $config['api_key']
+    );
+
+    if ($rawResponse === false || $status >= 400) {
+        $apiError = extractApiError($rawResponse);
+        respond([
+            'error' => $requestError ?: $apiError ?: 'O Grok nao conseguiu analisar a foto agora.',
+            'detail' => $requestError ?: $apiError ?: 'Resposta HTTP ' . $status,
+        ], $status === 429 ? 429 : 502);
+    }
+
+    $response = json_decode((string) $rawResponse, true);
+    $content = $response['choices'][0]['message']['content'] ?? null;
+    $analysis = is_string($content) ? json_decode($content, true) : null;
+
+    if (!is_array($analysis)) {
+        respond(['error' => 'O Grok retornou uma resposta inesperada.'], 502);
+    }
+
+    return $analysis;
+}
+
 function extractApiError(string|false $rawResponse): string
 {
     if (!is_string($rawResponse) || $rawResponse === '') {
@@ -255,6 +347,30 @@ function postJson(string $url, array $payload, string $apiKey): array
     return [$response, (int) ($matches[1] ?? 0), $response === false ? 'Falha na requisicao HTTPS.' : ''];
 }
 
+function postXaiJson(string $url, array $payload, string $apiKey): array
+{
+    if (!function_exists('curl_init')) {
+        return [false, 0, 'Habilite a extensao curl no php.ini para usar a xAI.'];
+    }
+
+    $curl = curl_init($url);
+    curl_setopt_array($curl, [
+        CURLOPT_POST => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT => 60,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $apiKey,
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload),
+    ]);
+    $response = curl_exec($curl);
+    $status = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+    $error = curl_error($curl);
+    curl_close($curl);
+    return [$response, $status, $error];
+}
+
 function saveProfilePhoto(array $photo, string $mimeType, string $username): string
 {
     $dir = __DIR__ . '/../assets/images/perfil/';
@@ -296,10 +412,6 @@ function saveLogin(array $analysis, string $username, string $fotoPath): int
         'INSERT INTO fotos (usuario_id, arquivo, score) VALUES (:usuario_id, :arquivo, :score)'
     )->execute(['usuario_id' => $userId, 'arquivo' => $fotoPath, 'score' => $score]);
 
-    $pdo->prepare(
-        'INSERT INTO rankings (usuario_id, name, score) VALUES (:usuario_id, :name, :score)'
-    )->execute(['usuario_id' => $userId, 'name' => $username, 'score' => $score]);
-
     $_SESSION['carecai_usuario_id'] = $userId;
     $_SESSION['carecai_usuario']    = $username;
     $_SESSION['carecai_tipo']       = $type;
@@ -313,7 +425,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 [$photo, $mimeType] = validateImage();
-$analysis = analyzeWithGemini($photo, $mimeType, loadGeminiConfig());
+$provider = $_POST['provider'] ?? 'gemini';
+$analysis = $provider === 'xai'
+    ? analyzeWithXai($photo, $mimeType, loadXaiConfig())
+    : analyzeWithGemini($photo, $mimeType, loadGeminiConfig());
 $analysis['baldness_level'] = max(0, min(100, (int) ($analysis['baldness_level'] ?? 0)));
 
 if ($analysis['classification'] !== 'careca' && $analysis['baldness_level'] >= 10) {
