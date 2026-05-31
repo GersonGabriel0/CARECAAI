@@ -828,6 +828,325 @@ main.login-page {
   margin-bottom: 24px;
 }
 
+/* INDEX: HERO MELHORADO */
+
+.hero-span--calvo {
+  color: #d97706;
+}
+
+.hero-sub {
+  margin: 0 auto 28px;
+  max-width: 560px;
+  color: #68697d;
+  line-height: 1.65;
+  font-size: 17px;
+}
+
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.hero-cta-primary {
+  font-size: 16px;
+  padding: 14px 28px;
+}
+
+.secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border: 2px solid #5b38e8;
+  border-radius: 10px;
+  color: #5b38e8;
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.secondary-button:hover {
+  background: #f0edff;
+}
+
+.hero-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.hero-badge {
+  padding: 5px 14px;
+  border-radius: 50px;
+  background: #f0edff;
+  border: 1px solid #d4ccf8;
+  font-size: 13px;
+  color: #5b38e8;
+  font-weight: 600;
+}
+
+.hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.hero-tipo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 28px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  min-width: 180px;
+}
+
+.hero-tipo img {
+  height: 140px;
+  width: auto;
+  object-fit: contain;
+}
+
+.hero-tipo strong {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.hero-tipo small {
+  font-size: 12px;
+  color: #68697d;
+}
+
+.hero-tipo--careca {
+  background: #f0edff;
+  border-color: #d4ccf8;
+}
+
+.hero-tipo--careca strong { color: #5b38e8; }
+
+.hero-tipo--calvo {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+.hero-tipo--calvo strong { color: #d97706; }
+
+.hero-vs {
+  font-size: 28px;
+  font-weight: 900;
+  color: #bcb0f8;
+  padding: 12px;
+}
+
+/* INDEX: STATS COM ICONE */
+
+.stat-icon {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+/* INDEX: COMO FUNCIONA COM ICONE */
+
+.passo-icon {
+  display: block;
+  font-size: 32px;
+  margin: 10px 0 6px;
+}
+
+/* INDEX: TIPOS CARECA VS CALVO */
+
+.tipos-section {
+  padding: 60px 0 20px;
+  text-align: center;
+}
+
+.tipos-section > p { margin-bottom: 4px; }
+.tipos-section > h2 { margin-bottom: 32px; }
+
+.tipos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.tipo-card {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 28px;
+  border-radius: 20px;
+  border: 2px solid transparent;
+  text-align: left;
+  gap: 20px;
+}
+
+.tipo-card--careca {
+  background: linear-gradient(135deg, #f0edff 0%, #e8e3ff 100%);
+  border-color: #c4b5fd;
+}
+
+.tipo-card--calvo {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #fde68a;
+}
+
+.tipo-card-topo p {
+  color: #68697d;
+  line-height: 1.5;
+  margin: 8px 0 0;
+}
+
+.tipo-card-icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.tipo-card h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.tipo-card--careca h3 { color: #4c1d95; }
+.tipo-card--calvo h3  { color: #92400e; }
+
+.tipo-card-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tipo-card-lista li {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.tipo-card--calvo-btn {
+  background: #d97706;
+}
+
+/* INDEX: CARDS COM ICONE */
+
+.card-icon {
+  display: block;
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.card-grid--4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* INDEX: CTA FINAL MELHORADO */
+
+.cta-final {
+  margin: 40px 0 60px;
+  padding: 0;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #2d0f8a 0%, #5b38e8 60%, #7c3aed 100%);
+  border: none;
+  overflow: hidden;
+}
+
+.cta-final-inner {
+  padding: 64px 40px;
+  text-align: center;
+}
+
+.cta-final h2 {
+  color: #fff;
+  font-size: clamp(24px, 3.5vw, 38px);
+  margin-bottom: 12px;
+}
+
+.cta-final p {
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 28px;
+  font-size: 16px;
+}
+
+.cta-eyebrow {
+  color: rgba(255, 255, 255, 0.55) !important;
+  margin-bottom: 12px;
+}
+
+.cta-final-btn {
+  background: #fff;
+  color: #5b38e8;
+  font-size: 16px;
+  padding: 16px 32px;
+}
+
+.cta-final-btn:hover {
+  background: #f0edff;
+}
+
+/* INDEX: FOOTER MELHORADO */
+
+.site-footer {
+  border-top: 1px solid #e0deec;
+  padding: 32px 0 20px;
+}
+
+.footer-inner {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.footer-brand p {
+  margin: 6px 0 0;
+  color: #76778b;
+  font-size: 13px;
+}
+
+.footer-nav {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-nav a {
+  color: #68697d;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.footer-nav a:hover {
+  color: #5b38e8;
+}
+
+.footer-copy {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  color: #a0a1b0;
+  font-size: 12px;
+  text-align: center;
+  border-top: 1px solid #f0eeff;
+  padding-top: 16px;
+}
+
 /* LOGIN FOTO */
 
 .upload-area.com-foto {
@@ -1851,7 +2170,8 @@ main.login-page {
     grid-template-columns: 1fr;
   }
 
-  .card-grid {
+  .card-grid,
+  .card-grid--4 {
     grid-template-columns: 1fr;
   }
 
@@ -1870,6 +2190,25 @@ main.login-page {
 
   .passos {
     gap: 12px;
+  }
+
+  .tipos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-visual {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hero-vs {
+    transform: rotate(90deg);
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
   }
 
   .ranking-split {

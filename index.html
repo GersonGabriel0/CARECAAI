@@ -3,16 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta
-      name="description"
-      content="CarecAI: inteligencia artificial aplicada a superficies brilhantes."
-    >
-    <title>CarecAI | Analise craniana avancada</title>
+    <meta name="description" content="CarequeIA: inteligencia artificial aplicada a superficies brilhantes. Descubra se voce e careca ou calvo.">
+    <title>CarequeIA | Analise craniana avancada</title>
     <link rel="stylesheet" href="assets/css/style.css">
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="index.html"><img src="assets/images/logocareque.jpeg" alt="CarecAI" class="brand-logo"><span class="brand-nome">CarequeIA</span></a>
+      <a class="brand" href="index.html"><img src="assets/images/logocareque.jpeg" alt="CarequeIA" class="brand-logo"><span class="brand-nome">CarequeIA</span></a>
+      <nav aria-label="Navegacao principal">
+        <a href="galeria.html">Galeria</a>
+        <a href="ranking.html">Ranking</a>
+      </nav>
       <div class="header-actions">
         <button class="theme-button" id="theme-button" type="button" title="Ativar Bald Mode">
           <img class="theme-icon" src="assets/Careca.svg" alt="Ativar Bald Mode">
@@ -26,34 +27,31 @@
       <!-- HERO -->
       <section class="hero" id="inicio">
         <p class="eyebrow">TECNOLOGIA DE PONTA PARA QUEM NAO PRECISA DE PENTE</p>
-        <h1>Descubra se voce e <span>careca</span> ou so calvo.</h1>
-        <p>
-          Envie uma foto. O sistema analisa, classifica e libera seu painel
-          exclusivo. Sem senha. So careca.
+        <h1>Descubra se voce e <span>careca</span><br>ou <span class="hero-span--calvo">calvo</span>.</h1>
+        <p class="hero-sub">
+          Envie uma foto. A IA analisa, classifica e libera seu painel exclusivo em segundos.
+          Sem senha. Sem pente. Sem desculpa.
         </p>
-        <a class="primary-button" href="login.html">Analisar agora</a>
-      </section>
-
-      <!-- COMO FUNCIONA -->
-      <section class="como-funciona" id="como-funciona">
-        <h2>Como funciona</h2>
-        <div class="passos">
-          <div class="passo">
-            <span class="passo-num">1</span>
-            <h3>Envie sua foto</h3>
-            <p>Escolha a melhor angulacao da sua careca e faca o upload.</p>
+        <div class="hero-ctas">
+          <a class="primary-button hero-cta-primary" href="login.html">🔍 Analisar minha careca</a>
+          <a class="secondary-button" href="galeria.html">Ver galeria</a>
+        </div>
+        <div class="hero-badges">
+          <span class="hero-badge">✓ 100% gratuito</span>
+          <span class="hero-badge">✓ Resultado em segundos</span>
+          <span class="hero-badge">✓ Sem cadastro</span>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-tipo hero-tipo--careca">
+            <img src="assets/Careca.svg" alt="Careca">
+            <strong>Careca Elite</strong>
+            <small>Pista de pouso certificada</small>
           </div>
-          <div class="passo-seta">→</div>
-          <div class="passo">
-            <span class="passo-num">2</span>
-            <h3>O sistema analisa</h3>
-            <p>Nosso algoritmo mede brilho, aerodinamica e refletividade.</p>
-          </div>
-          <div class="passo-seta">→</div>
-          <div class="passo">
-            <span class="passo-num">3</span>
-            <h3>Descubra seu tipo</h3>
-            <p>Careca Elite ou Calvo em Evolucao. Cada um tem seu painel.</p>
+          <div class="hero-vs">VS</div>
+          <div class="hero-tipo hero-tipo--calvo">
+            <img src="assets/Calvo.svg" alt="Calvo">
+            <strong>Calvo em Evolucao</strong>
+            <small>Apostando no brilho</small>
           </div>
         </div>
       </section>
@@ -61,53 +59,144 @@
       <!-- STATS -->
       <section class="stats">
         <div class="stat">
-          <span class="stat-num">1.247</span>
+          <span class="stat-icon">📊</span>
+          <span class="stat-num" data-stat="analises">--</span>
           <span class="stat-label">Analises realizadas</span>
         </div>
         <div class="stat">
-          <span class="stat-num">843</span>
+          <span class="stat-icon">🏆</span>
+          <span class="stat-num" data-stat="carecas">--</span>
           <span class="stat-label">Carecas certificados</span>
         </div>
         <div class="stat">
-          <span class="stat-num">9.382</span>
+          <span class="stat-icon">👋</span>
+          <span class="stat-num" data-stat="tapas">--</span>
           <span class="stat-label">Tapas dados na galeria</span>
         </div>
         <div class="stat">
-          <span class="stat-num">404</span>
-          <span class="stat-label">Calvos em recuperacao</span>
+          <span class="stat-icon">🌱</span>
+          <span class="stat-num" data-stat="calvos">--</span>
+          <span class="stat-label">Calvos em transicao</span>
+        </div>
+      </section>
+
+      <!-- COMO FUNCIONA -->
+      <section class="como-funciona" id="como-funciona">
+        <p class="eyebrow">SIMPLES E RAPIDO</p>
+        <h2>Como funciona</h2>
+        <div class="passos">
+          <div class="passo">
+            <span class="passo-num">1</span>
+            <span class="passo-icon">📷</span>
+            <h3>Envie sua foto</h3>
+            <p>Escolha a melhor angulacao da sua careca (ou do que sobrou) e faca o upload.</p>
+          </div>
+          <div class="passo-seta">→</div>
+          <div class="passo">
+            <span class="passo-num">2</span>
+            <span class="passo-icon">🤖</span>
+            <h3>A IA analisa</h3>
+            <p>Nosso algoritmo mede brilho, aerodinamica e penteabilidade. Resultado: zero.</p>
+          </div>
+          <div class="passo-seta">→</div>
+          <div class="passo">
+            <span class="passo-num">3</span>
+            <span class="passo-icon">🏅</span>
+            <h3>Receba seu veredicto</h3>
+            <p>Careca Elite ou Calvo em Evolucao, com painel, metricas e certificado oficial.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARECA VS CALVO -->
+      <section class="tipos-section">
+        <p class="eyebrow">DOIS DESTINOS, UMA CABECA</p>
+        <h2>Qual e o seu lado?</h2>
+        <div class="tipos-grid">
+          <div class="tipo-card tipo-card--careca">
+            <div class="tipo-card-topo">
+              <span class="tipo-card-icon">🏆</span>
+              <h3>Careca Elite</h3>
+              <p>Superficie craniana total. Brilho certificado. Pista de pouso aprovada pela IA com louvor.</p>
+            </div>
+            <ul class="tipo-card-lista">
+              <li>✓ Certificado craniano oficial em PDF</li>
+              <li>✓ Metricas de brilho e aerodinamica</li>
+              <li>✓ Galeria de tapas exclusiva</li>
+              <li>✓ Ranking de carecas analisados</li>
+            </ul>
+            <a class="primary-button" href="login.html">Quero ser certificado</a>
+          </div>
+          <div class="tipo-card tipo-card--calvo">
+            <div class="tipo-card-topo">
+              <span class="tipo-card-icon">🌱</span>
+              <h3>Calvo em Evolucao</h3>
+              <p>A jornada esta em andamento. Seus foliculos planejam a aposentadoria. A testa avanca.</p>
+            </div>
+            <ul class="tipo-card-lista">
+              <li>✓ Barra de progresso para careca</li>
+              <li>✓ Metricas de evolucao capilar</li>
+              <li>✓ Galeria de maquinadas</li>
+              <li>✓ Plano de desocupacao capilar</li>
+            </ul>
+            <a class="primary-button tipo-card--calvo-btn" href="login.html">Acompanhar evolucao</a>
+          </div>
         </div>
       </section>
 
       <!-- RECURSOS -->
       <section class="features" id="recursos">
-        <h2>O que voce ganha ao entrar</h2>
-        <div class="card-grid">
+        <p class="eyebrow">O QUE VOCE GANHA</p>
+        <h2>Tudo que uma careca merece</h2>
+        <div class="card-grid card-grid--4">
           <article class="card">
-            <h3>Analise craniana</h3>
-            <p>Score preciso de brilho, aerodinamica e penteabilidade (zero).</p>
+            <span class="card-icon">🤖</span>
+            <h3>Analise com IA</h3>
+            <p>Score preciso de brilho, aerodinamica e penteabilidade (invariavelmente zero para carecas).</p>
           </article>
           <article class="card">
+            <span class="card-icon">📊</span>
             <h3>Painel exclusivo</h3>
-            <p>Careca tem painel elite. Calvo tem painel de evolucao com barra de progresso.</p>
+            <p>Dashboard personalizado por tipo com metricas zoeiras e diagnostico aleatorio da IA.</p>
           </article>
           <article class="card">
-            <h3>Galeria de tapas</h3>
-            <p>Curta as fotos do jeito certo: dando um tapa na careca alheia.</p>
+            <span class="card-icon">👋</span>
+            <h3>Galeria interativa</h3>
+            <p>Carecas levam tapas. Calvos levam maquinadas. Curta do jeito certo.</p>
+          </article>
+          <article class="card">
+            <span class="card-icon">🏅</span>
+            <h3>Certificado oficial</h3>
+            <p>PDF com frente e verso. Assinado: IA CarequeIA™. Vale em qualquer barbearia.</p>
           </article>
         </div>
       </section>
 
       <!-- CTA FINAL -->
       <section class="cta-final">
-        <h2>Pronto para descobrir sua classificacao?</h2>
-        <p>Leva menos de 30 segundos. Sem senha. Sem complicacao.</p>
-        <a class="primary-button" href="login.html">Comecar agora</a>
+        <div class="cta-final-inner">
+          <p class="eyebrow cta-eyebrow">PRONTO PARA A VERDADE?</p>
+          <h2>Descubra sua classificacao craniana</h2>
+          <p>Leva menos de 30 segundos. Sem senha. Sem pente. Sem desculpa.</p>
+          <a class="primary-button cta-final-btn" href="login.html">🔍 Analisar minha careca agora</a>
+        </div>
       </section>
 
     </main>
 
-    <footer>
-      <p>CarecAI &mdash; Ciencia avancada para superficies brilhantes.</p>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a class="brand" href="index.html"><img src="assets/images/logocareque.jpeg" alt="CarequeIA" class="brand-logo"><span class="brand-nome">CarequeIA</span></a>
+          <p>Inteligencia Artificial para Carecas.</p>
+        </div>
+        <nav class="footer-nav">
+          <a href="login.html">Analisar</a>
+          <a href="galeria.html">Galeria</a>
+          <a href="ranking.html">Ranking</a>
+        </nav>
+      </div>
+      <p class="footer-copy">CarequeIA &mdash; Ciencia avancada para superficies brilhantes™</p>
     </footer>
 
     <script src="assets/js/nav.js"></script>
