@@ -200,6 +200,98 @@ function analyzeWithGemini(array $photo, string $mimeType, array $config): array
     return $analysis;
 }
 
+function loadClaudeConfig(): array
+{
+    $configFile = __DIR__ . '/config/claude.php';
+
+    if (!file_exists($configFile)) {
+        respond(['error' => 'Configure api/config/claude.php antes de usar o Claude.'], 500);
+    }
+
+    $config = require $configFile;
+
+    if (empty($config['api_key']) || $config['api_key'] === 'COLE_SUA_CHAVE_ANTHROPIC_AQUI') {
+        respond(['error' => 'Informe uma chave valida da API Anthropic.'], 500);
+    }
+
+    return $config;
+}
+
+function analyzeWithClaude(array $photo, string $mimeType, array $config): array
+{
+    if (!function_exists('curl_init')) {
+        respond(['error' => 'Habilite a extensao curl no php.ini para usar o Claude.'], 500);
+    }
+
+    $imageData = base64_encode((string) file_get_contents($photo['tmp_name']));
+
+    $payload = [
+        'model'      => $config['model'] ?? 'claude-opus-4-8',
+        'max_tokens' => 300,
+        'messages'   => [[
+            'role'    => 'user',
+            'content' => [
+                [
+                    'type'   => 'image',
+                    'source' => [
+                        'type'       => 'base64',
+                        'media_type' => $mimeType,
+                        'data'       => $imageData,
+                    ],
+                ],
+                [
+                    'type' => 'text',
+                    'text' => 'Analise somente a quantidade visual de cabelo da pessoa na foto. Retorne APENAS um JSON valido sem markdown com este formato exato: {"classification":"careca","score":95,"hair_level":5,"baldness_level":95,"message":"mensagem curta humoristica em portugues"}. classification deve ser "careca" (sem cabelo), "calvo" (perda visivel >= 10%) ou "cabelo" (cobertura abundante). score e hair_level e baldness_level sao inteiros de 0 a 100. message deve ser leve e humoristica em portugues brasileiro. Nao identifique a pessoa.',
+                ],
+            ],
+        ]],
+    ];
+
+    $curl = curl_init('https://api.anthropic.com/v1/messages');
+    curl_setopt_array($curl, [
+        CURLOPT_POST           => true,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 35,
+        CURLOPT_HTTPHEADER     => [
+            'Content-Type: application/json',
+            'x-api-key: ' . $config['api_key'],
+            'anthropic-version: 2023-06-01',
+        ],
+        CURLOPT_POSTFIELDS => json_encode($payload),
+    ]);
+    $rawResponse = curl_exec($curl);
+    $status      = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+    $curlError   = curl_error($curl);
+    curl_close($curl);
+
+    if ($rawResponse === false || $status >= 400) {
+        $decoded  = is_string($rawResponse) ? json_decode($rawResponse, true) : [];
+        $apiError = $decoded['error']['message'] ?? '';
+        respond([
+            'error' => $curlError ?: $apiError ?: 'O Claude nao conseguiu analisar a foto agora.',
+        ], $status === 429 ? 429 : 502);
+    }
+
+    $response = json_decode((string) $rawResponse, true);
+    $text     = $response['content'][0]['text'] ?? null;
+
+    if (!is_string($text)) {
+        respond(['error' => 'O Claude retornou uma resposta inesperada.'], 502);
+    }
+
+    // Extrai JSON da resposta (Claude pode incluir texto extra)
+    $analysis = json_decode($text, true);
+    if (!is_array($analysis) && preg_match('/\{[^{}]+\}/s', $text, $matches)) {
+        $analysis = json_decode($matches[0], true);
+    }
+
+    if (!is_array($analysis)) {
+        respond(['error' => 'O Claude nao retornou JSON valido.'], 502);
+    }
+
+    return $analysis;
+}
+
 function analyzeWithXai(array $photo, string $mimeType, array $config): array
 {
     $schema = [
@@ -426,9 +518,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 [$photo, $mimeType] = validateImage();
 $provider = $_POST['provider'] ?? 'gemini';
-$analysis = $provider === 'xai'
-    ? analyzeWithXai($photo, $mimeType, loadXaiConfig())
-    : analyzeWithGemini($photo, $mimeType, loadGeminiConfig());
+$analysis = match ($provider) {
+    'xai'    => analyzeWithXai($photo, $mimeType, loadXaiConfig()),
+    'claude' => analyzeWithClaude($photo, $mimeType, loadClaudeConfig()),
+    default  => analyzeWithGemini($photo, $mimeType, loadGeminiConfig()),
+};
 $analysis['baldness_level'] = max(0, min(100, (int) ($analysis['baldness_level'] ?? 0)));
 
 if ($analysis['classification'] !== 'careca' && $analysis['baldness_level'] >= 10) {

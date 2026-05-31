@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+session_start();
 header('Content-Type: application/json; charset=utf-8');
 
 function respond(array $payload, int $status = 200): never
@@ -9,6 +10,113 @@ function respond(array $payload, int $status = 200): never
     http_response_code($status);
     echo json_encode($payload, JSON_UNESCAPED_UNICODE);
     exit;
+}
+
+function conectarBanco(): ?PDO
+{
+    $configFile = __DIR__ . '/config/database.php';
+    if (!file_exists($configFile)) return null;
+
+    $config = require $configFile;
+    $dsn = sprintf(
+        'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
+        $config['host'], $config['port'], $config['database']
+    );
+    try {
+        return new PDO($dsn, $config['username'], $config['password'], [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]);
+    } catch (PDOException $e) {
+        return null;
+    }
+}
+
+function salvarImagemFiltrada(string $base64Data, string $mimeType, string $username): string
+{
+    $dir = __DIR__ . '/../assets/images/perfil/';
+    if (!is_dir($dir)) mkdir($dir, 0755, true);
+
+    $ext = match ($mimeType) {
+        'image/png'  => 'png',
+        'image/webp' => 'webp',
+        default      => 'jpg',
+    };
+    $safe     = preg_replace('/[^a-z0-9_-]/', '', strtolower($username));
+    $filename = $safe . '.' . $ext;
+
+    file_put_contents($dir . $filename, base64_decode($base64Data));
+
+    return 'assets/images/perfil/' . $filename;
+}
+
+function reanalyzar(string $realFile, string $mimeType): array
+{
+    $configFile = __DIR__ . '/config/gemini.php';
+    if (!file_exists($configFile)) {
+        return ['classification' => 'careca', 'score' => 92, 'hair_level' => 5, 'baldness_level' => 95, 'message' => 'Upgrade aerodinamico confirmado!'];
+    }
+
+    $geminiConfig = require $configFile;
+
+    if (empty($geminiConfig['api_key']) || !function_exists('curl_init')) {
+        return ['classification' => 'careca', 'score' => 92, 'hair_level' => 5, 'baldness_level' => 95, 'message' => 'Upgrade aerodinamico confirmado!'];
+    }
+
+    $schema = [
+        'type' => 'object',
+        'properties' => [
+            'classification' => ['type' => 'string', 'enum' => ['careca', 'calvo', 'cabelo']],
+            'score'          => ['type' => 'integer', 'minimum' => 0, 'maximum' => 100],
+            'hair_level'     => ['type' => 'integer', 'minimum' => 0, 'maximum' => 100],
+            'baldness_level' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 100],
+            'message'        => ['type' => 'string'],
+        ],
+        'required' => ['classification', 'score', 'hair_level', 'baldness_level', 'message'],
+    ];
+
+    $payload = [
+        'contents' => [[
+            'parts' => [
+                ['text' => 'Analise somente a quantidade visual de cabelo da pessoa na foto editada. Classifique como careca, calvo ou cabelo. Pontuacao humoristica de 0 a 100. Mensagem curta e humoristica em portugues brasileiro. Nao identifique a pessoa.'],
+                ['inline_data' => ['mime_type' => $mimeType, 'data' => base64_encode((string) file_get_contents($realFile))]],
+            ],
+        ]],
+        'generationConfig' => [
+            'responseMimeType' => 'application/json',
+            'responseJsonSchema' => $schema,
+        ],
+    ];
+
+    $model = $geminiConfig['model'] ?? 'gemini-2.5-flash-lite';
+    $url   = sprintf('https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent', rawurlencode($model));
+
+    [$raw, $status] = postGeminiJson($url, $payload, $geminiConfig['api_key']);
+
+    if (!is_string($raw) || $status >= 400) {
+        return ['classification' => 'careca', 'score' => 92, 'hair_level' => 5, 'baldness_level' => 95, 'message' => 'Upgrade aerodinamico confirmado!'];
+    }
+
+    $resp     = json_decode($raw, true);
+    $text     = $resp['candidates'][0]['content']['parts'][0]['text'] ?? null;
+    $analysis = is_string($text) ? json_decode($text, true) : null;
+
+    return is_array($analysis) ? $analysis : ['classification' => 'careca', 'score' => 92, 'hair_level' => 5, 'baldness_level' => 95, 'message' => 'Upgrade aerodinamico confirmado!'];
+}
+
+function atualizarPerfil(PDO $pdo, int $usuarioId, string $username, array $analysis, string $fotoPath): void
+{
+    $tipo  = $analysis['classification'] === 'careca' ? 'careca' : 'calvo';
+    $score = max(0, min(100, (int) ($analysis['score'] ?? 0)));
+
+    $pdo->prepare('UPDATE usuarios SET tipo = :tipo, score = :score WHERE id = :id')
+        ->execute(['tipo' => $tipo, 'score' => $score, 'id' => $usuarioId]);
+
+    $pdo->prepare('INSERT INTO fotos (usuario_id, arquivo, score) VALUES (:uid, :arq, :score)')
+        ->execute(['uid' => $usuarioId, 'arq' => $fotoPath, 'score' => $score]);
+
+    $_SESSION['carecai_tipo']  = $tipo;
+    $_SESSION['carecai_score'] = $score;
 }
 
 function extractApiError(string|false $rawResponse): string
@@ -148,27 +256,21 @@ if ($provider === 'gemini') {
         $geminiConfig['api_key']
     );
 
-    if ($rawResponse === false || $status >= 400) {
-        $apiError = extractApiError($rawResponse);
-        respond([
-            'error' => $requestError ?: $apiError ?: 'O Gemini nao conseguiu aplicar o filtro agora.',
-        ], $status === 429 ? 429 : 502);
-    }
+    if ($rawResponse !== false && $status < 400) {
+        $geminiResponse = json_decode((string) $rawResponse, true);
+        $parts = $geminiResponse['candidates'][0]['content']['parts'] ?? [];
 
-    $geminiResponse = json_decode((string) $rawResponse, true);
-    $parts = $geminiResponse['candidates'][0]['content']['parts'] ?? [];
-
-    foreach ($parts as $part) {
-        $image = $part['inlineData'] ?? $part['inline_data'] ?? null;
-        if (isset($image['data'])) {
-            respond([
-                'image' => 'data:' . ($image['mimeType'] ?? $image['mime_type'] ?? 'image/png')
-                    . ';base64,' . $image['data'],
-            ]);
+        foreach ($parts as $part) {
+            $image = $part['inlineData'] ?? $part['inline_data'] ?? null;
+            if (isset($image['data'])) {
+                $filtMime = $image['mimeType'] ?? $image['mime_type'] ?? 'image/png';
+                responderComFiltro($image['data'], $filtMime);
+            }
         }
     }
 
-    respond(['error' => 'O Gemini nao retornou a imagem editada.'], 502);
+    // Gemini falhou (cota, erro ou sem imagem) — tenta xAI automaticamente
+    // (cai no bloco xAI abaixo)
 }
 
 $configFile = __DIR__ . '/config/xai.php';
@@ -216,7 +318,7 @@ $response = json_decode((string) $rawResponse, true);
 $result = $response['data'][0] ?? [];
 
 if (!empty($result['b64_json'])) {
-    respond(['image' => 'data:image/png;base64,' . $result['b64_json']]);
+    responderComFiltro($result['b64_json'], 'image/png');
 }
 
 if (!empty($result['url'])) {
@@ -224,3 +326,42 @@ if (!empty($result['url'])) {
 }
 
 respond(['error' => 'A xAI nao retornou a imagem editada.'], 502);
+
+// ── Salva, reanálisa e atualiza o banco ───────────────────────
+function responderComFiltro(string $base64Data, string $filtMime): never
+{
+    $usuarioId = $_SESSION['carecai_usuario_id'] ?? null;
+    $username  = $_SESSION['carecai_usuario']    ?? null;
+
+    $fotoPath  = '';
+    $analysis  = [];
+    $pdo       = null;
+
+    if ($usuarioId && $username) {
+        // 1. Salva a foto filtrada no disco
+        $fotoPath = salvarImagemFiltrada($base64Data, $filtMime, $username);
+        $savedFile = __DIR__ . '/../' . $fotoPath;
+
+        // 2. Reanálisa a imagem filtrada
+        $analysis = reanalyzar($savedFile, $filtMime);
+
+        // 3. Atualiza banco
+        $pdo = conectarBanco();
+        if ($pdo) {
+            atualizarPerfil($pdo, (int) $usuarioId, $username, $analysis, $fotoPath);
+        }
+    }
+
+    $tipo  = $analysis['classification'] ?? 'careca';
+    if ($tipo !== 'careca') $tipo = 'calvo';
+    $score   = (int) ($analysis['score']   ?? 92);
+    $message = $analysis['message']        ?? 'Upgrade aerodinamico aplicado!';
+
+    respond([
+        'image'     => 'data:' . $filtMime . ';base64,' . $base64Data,
+        'foto_path' => $fotoPath,
+        'tipo'      => $tipo,
+        'score'     => $score,
+        'message'   => $message,
+    ]);
+}

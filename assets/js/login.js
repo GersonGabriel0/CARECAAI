@@ -141,6 +141,26 @@ baldButton.addEventListener('click', async () => {
     }
 
     preview.src = filtro.image;
+
+    // Atualiza sessionStorage com novo status
+    if (filtro.tipo) {
+      sessionStorage.setItem('carecai_tipo',      filtro.tipo);
+      sessionStorage.setItem('carecai_score',     String(filtro.score ?? 0));
+      if (filtro.foto_path) {
+        sessionStorage.setItem('carecai_foto_path', filtro.foto_path);
+        savedFotoPath = filtro.foto_path;
+      }
+
+      // Atualiza card de resultado na tela
+      document.querySelector('#resultado-score').textContent = `${filtro.score} pts`;
+      document.querySelector('#resultado-tipo').textContent  =
+        filtro.tipo === 'careca' ? 'CARECA VERIFICADO' : 'CALVO EM EVOLUCAO';
+      if (filtro.message) {
+        document.querySelector('#resultado-desc').textContent = filtro.message;
+      }
+      continueLink.href = filtro.tipo === 'careca' ? 'painel-careca.html' : 'painel-calvo.html';
+    }
+
     msg.textContent = 'Upgrade aplicado: menos cabelo, mais velocidade de cruzeiro.';
   } catch (error) {
     msg.textContent = `${error.message} A foto original foi mantida.`;
