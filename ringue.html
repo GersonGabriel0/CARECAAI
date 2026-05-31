@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringue | CarequeIA</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="index.html"><img src="assets/images/logocareque.jpeg" alt="CarequeIA" class="brand-logo"><span class="brand-nome">CarequeIA</span></a>
+      <nav aria-label="Navegacao principal">
+        <a href="index.html">Inicio</a>
+        <a href="galeria.html">Galeria</a>
+        <a href="ranking.html">Ranking</a>
+        <a href="ringue.html" aria-current="page">Ringue</a>
+      </nav>
+      <div class="header-actions">
+        <button class="theme-button" id="theme-button" type="button" title="Ativar Bald Mode">
+          <img class="theme-icon" src="assets/Careca.svg" alt="Ativar Bald Mode">
+        </button>
+        <a class="login-link" href="login.html">Entrar</a>
+      </div>
+    </header>
+
+    <main class="ringue-main">
+
+      <!-- VIEW 1: SELECAO DE OPONENTE -->
+      <div id="view-selecao" class="ringue-view">
+        <div class="ringue-titulo">
+          <h1>⚔️ Ringue</h1>
+          <p>Escolha um oponente e descubra quem e mais careca</p>
+        </div>
+
+        <!-- CARROSEL DE BATALHAS -->
+        <div id="historico-wrap" class="historico-wrap" hidden>
+          <p class="ringue-lado-label">⚔️ Batalhas recentes</p>
+          <div id="historico-carousel" class="historico-carousel"></div>
+        </div>
+
+        <div class="ringue-selecao-layout">
+          <div class="ringue-lado">
+            <p class="ringue-lado-label">Voce</p>
+            <div class="ringue-fighter-card" id="meu-perfil-card">
+              <div class="ringue-spinner">Carregando...</div>
+            </div>
+          </div>
+
+          <div class="ringue-vs-central">
+            <span class="ringue-vs-texto">VS</span>
+          </div>
+
+          <div class="ringue-lado ringue-lado--oponentes">
+            <p class="ringue-lado-label">Escolha seu oponente</p>
+            <div id="oponentes-grid" class="oponentes-grid">
+              <p class="ringue-loading">Carregando oponentes...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIEW 2: ARENA DE BATALHA -->
+      <div id="view-batalha" class="ringue-view" hidden>
+        <div class="ringue-titulo">
+          <h1>⚔️ Que comece a batalha!</h1>
+          <p>Prepare sua careca. Nao vai doer. Muito.</p>
+        </div>
+
+        <div class="arena">
+          <div class="arena-fighter" id="fighter-eu"></div>
+          <div class="arena-centro">
+            <div class="arena-vs-badge">VS</div>
+          </div>
+          <div class="arena-fighter" id="fighter-oponente"></div>
+        </div>
+
+        <div class="arena-acoes">
+          <button class="primary-button arena-btn-lutar" id="btn-lutar">🥊 Iniciar Batalha!</button>
+          <button class="theme-button" id="btn-cancelar">← Voltar</button>
+        </div>
+      </div>
+
+      <!-- VIEW 3: RESULTADOS -->
+      <div id="view-resultado" class="ringue-view" hidden>
+        <div id="resultado-banner" class="resultado-banner"></div>
+
+        <div class="resultado-arena">
+          <div class="resultado-side" id="resultado-lado-eu"></div>
+          <div class="resultado-rounds" id="resultado-rounds"></div>
+          <div class="resultado-side" id="resultado-lado-op"></div>
+        </div>
+
+        <div class="resultado-acoes">
+          <button class="primary-button" id="btn-revanche" hidden>🔄 Pedir Revanche</button>
+          <button class="theme-button" id="btn-novo-desafio">⚔️ Novo Desafio</button>
+        </div>
+
+        <div id="revanche-zona" class="revanche-zona" hidden>
+          <h3>📷 Mande uma foto melhor e tente de novo</h3>
+          <p>Uma nova analise pode mudar tudo. Ou nao. A IA decide.</p>
+          <label class="upload-area upload-area--ringue" id="revanche-label" for="revanche-foto">
+            <span class="upload-icon">📷</span>
+            <strong id="revanche-upload-texto">Enviar nova foto</strong>
+            <span class="upload-hint">JPG, PNG ou WEBP</span>
+          </label>
+          <input type="file" id="revanche-foto" accept="image/*">
+          <button class="primary-button" id="btn-reanalisar" disabled>🔍 Reanalisar e Revanche</button>
+          <p id="revanche-msg" class="form-message"></p>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- MODAL REVANCHE NA LISTAGEM -->
+    <div id="revanche-op-modal" class="rev-op-overlay" hidden>
+      <div class="rev-op-inner">
+        <h3>🔄 Revanche contra <span id="rev-op-nome"></span></h3>
+        <p>Envie uma foto nova para reanalisar seu nivel antes da batalha.</p>
+        <label class="upload-area upload-area--ringue" id="rev-op-label" for="rev-op-foto">
+          <span class="upload-icon">📷</span>
+          <strong id="rev-op-upload-txt">Enviar nova foto</strong>
+          <span class="upload-hint">JPG, PNG ou WEBP</span>
+        </label>
+        <input type="file" id="rev-op-foto" accept="image/*">
+        <div class="rev-op-acoes">
+          <button class="primary-button" id="btn-rev-op-confirmar" disabled>🔍 Analisar e Batalhar</button>
+          <button class="theme-button"   id="btn-rev-op-cancelar">Cancelar</button>
+        </div>
+        <p id="rev-op-msg" class="form-message"></p>
+      </div>
+    </div>
+
+    <script src="assets/js/nav.js"></script>
+    <script src="assets/js/ringue.js"></script>
+    <script src="assets/js/bald-mode.js"></script>
+  </body>
+</html>

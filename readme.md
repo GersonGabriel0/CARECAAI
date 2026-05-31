@@ -1,20 +1,23 @@
 # CarecAI
 
-> Ciencia avancada para superficies brilhantes.
+> Ciência avançada para superficies brilhantes.
 
 Sistema web criado para hackathon. O CarecAI recebe uma foto, gera metricas
 humoristicas e registra as melhores pontuacoes em um ranking de carecas.
 
 ## Stack
 
-- HTML
-- CSS
-- JavaScript
-- PHP
-- MySQL
+![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=black)
+![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
 
-No PHP, habilite `pdo_mysql` e pelo menos uma forma de realizar requisicoes
-HTTPS: a extensao `curl` ou `allow_url_fopen` com suporte a OpenSSL.
+### Inteligencias Artificiais
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75C2?style=for-the-badge&logo=googlegemini&logoColor=white)
+![xAI Grok](https://img.shields.io/badge/xAI%20Grok-000000?style=for-the-badge&logo=xai&logoColor=white)
+
+> **Configuracao do PHP:** Habilite `pdo_mysql` e pelo menos uma forma de realizar requisições HTTPS: a extensão `curl` ou `allow_url_fopen` com suporte a OpenSSL. 
 
 No Windows, localize o arquivo carregado com:
 
@@ -89,65 +92,71 @@ Depois acesse:
 http://localhost:8000
 ```
 
-Nunca envie `api/config/database.php`, `api/config/gemini.php` ou
-`api/config/xai.php` para o GitHub.
+Segurança: Nunca envie api/config/database.php, api/config/gemini.php ou api/config/xai.php para o GitHub. Certifique-se de que eles estão listados no seu arquivo .gitignore.
 
-## Estado atual
+## Demonstração
 
-- Pagina inicial responsiva.
-- Upload de imagem analisado pelo Gemini.
-- Seletor de IA: Gemini ou Grok para analise e para o filtro.
-- Bald Mode propositalmente dificil de ler.
-- Login por usuario e foto integrado ao PHP/MySQL.
-- Ranking e galeria alimentados pelos usuarios cadastrados.
-- Script SQL para criar a tabela `rankings`.
+### Página Inicial
 
-## Proximas entregas
+![Página Inicial](assets/images/home.png)
 
-1. Salvar os arquivos enviados e exibi-los na galeria.
-2. Montar o painel visual com todas as metricas da analise.
-3. Substituir os mocks restantes da galeria pelo banco.
-4. Salvar a imagem editada quando o usuario aplicar o filtro por IA.
-5. Melhorar responsividade e incluir imagens.
+### Tela de Login
 
-## Divisao da equipe
+![Tela de Login](assets/images/analise.png)
 
-| Responsavel | Nivel | Entrega | Arquivos principais |
-| --- | --- | --- | --- |
-| Tech lead | Senior (5 anos) | Backend PHP, autenticacao, integracao, deploy e code review de todos os PRs | `api/`, `database/` |
+### Tela de Análise de acesso
 
-| Dev 1 | gui | Painel de resultado (HTML + JS) e consumo da API de ranking | `index.html`, `assets/js/app.js` |
+![Tela de Análise de acesso](assets/images/analise.png)
 
-| Dev 2 | kety | Layout completo, Bald Modonsividade | `assets/css/style.css`, `assets/js/login.js` |
+### Relatório de análise
 
-| Dev 3 | thomaz | Estrutura HTML e CSS da tela de login, imagens e conteudo textual (sem JS) | `login.html`, `assets/images/` |
+![Relatório de análise](assets/images/ranking.png)
 
-## Fluxo de trabalho
+### Certificado análise
 
-Cada pessoa deve criar uma branch para sua tarefa:
+![Certificado análise](assets/images/ranking.png)
 
-```bash
-git checkout main
-git pull
-git checkout -b feat/nome-da-tarefa
-```
+### Galeria
 
-Depois das alteracoes:
+![Galeria](assets/images/ranking.png)
 
-```bash
-git add .
-git commit -m "feat: descreva sua entrega"
-git push -u origin feat/nome-da-tarefa
-```
+### Ranking
 
-Abra um Pull Request para `main`. Evite alterar arquivos fora da sua tarefa sem
-combinar com a equipe, principalmente `index.html` e `assets/css/style.css`.
+![Ranking](assets/images/ranking.png)
 
-Branches iniciais sugeridas tech lead:
+### Ringue
 
-```txt
-feat/auth-api
-feat/result-panel
-feat/ranking-ui
-feat/bald-mode
-```
+![Ringue](assets/images/ranking.png)
+
+### Dark Mode brilho careca
+
+![Dark Mode brilho careca](assets/images/ranking.png)
+
+
+## Equipe
+
+### Gerson
+![Gerson](assets/Readme/Pessoas/Gerson.png)
+
+**Analista de Software Sênior**
+
+---
+
+### Guilherme
+![Guilherme](assets/Readme/Pessoas/Guilherme.png)
+
+**Estudante de Engenharia de Software**
+
+---
+
+### Thomaz
+![Thomaz](assets/Readme/Pessoas/Thomaz.png)
+
+**Estudante de Engenharia de Software**
+
+---
+
+### Ketlyn
+![Ketlyn](assets/Readme/Pessoas/Ketlyn.png)
+
+**Estudante de Ciência da Computação**

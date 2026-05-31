@@ -32,5 +32,15 @@
   nome.textContent = `@${usuario}`;
   perfil.appendChild(nome);
 
+  const sair = document.createElement('button');
+  sair.type      = 'button';
+  sair.className = 'theme-button nav-sair-btn';
+  sair.textContent = 'Sair';
+  sair.addEventListener('click', () => {
+    sessionStorage.clear();
+    window.location.href = 'login.html';
+  });
+
   link.replaceWith(perfil);
+  perfil.insertAdjacentElement('afterend', sair);
 })();
