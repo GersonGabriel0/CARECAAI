@@ -8,12 +8,17 @@
   </head>
   <body class="result-page result-page--careca">
     <header class="site-header">
-      <a class="brand" href="index.html">Carec<span>AI</span></a>
+      <a class="brand" href="index.html"><img src="assets/images/logocareque.jpeg" alt="CarecAI" class="brand-logo"><span class="brand-nome">CarequeIA</span></a>
       <nav aria-label="Navegacao principal">
         <a href="galeria.html">Galeria</a>
         <a href="ranking.html">Ranking</a>
       </nav>
-      <button class="theme-button" id="sair-btn" type="button">Sair</button>
+      <div class="header-actions">
+        <button class="theme-button" id="theme-button" type="button" title="Ativar Bald Mode">
+          <img class="theme-icon" src="assets/Careca.svg" alt="Ativar Bald Mode">
+        </button>
+        <button class="theme-button" id="sair-btn" type="button">Sair</button>
+      </div>
     </header>
 
     <main class="result-main">
@@ -23,7 +28,12 @@
             <p class="eyebrow">RELATORIO CRANIANO OFICIAL</p>
             <h1>Seu resultado, <span id="painel-nome">Careca</span></h1>
           </div>
-          <span class="analysis-status">Analise concluida</span>
+          <div class="header-status-group">
+            <span class="analysis-status">Analise concluida</span>
+            <button class="primary-button cert-btn cert-btn--small" id="cert-btn" type="button">
+              🏅 Gerar Certificado
+            </button>
+          </div>
         </header>
 
         <div class="result-dashboard">
@@ -89,7 +99,20 @@
       </section>
     </main>
 
+    <div class="cert-modal" id="cert-modal" hidden>
+      <div class="cert-modal-inner">
+        <canvas class="cert-canvas" id="cert-canvas" width="800" height="560"></canvas>
+        <p class="cert-dica">Clique no certificado para virar</p>
+        <div class="cert-acoes">
+          <button class="primary-button" id="cert-download" type="button">⬇ Baixar PDF</button>
+          <button class="theme-button" id="cert-fechar" type="button">Fechar</button>
+        </div>
+      </div>
+    </div>
+
     <footer><p>CarecAI &mdash; Ciencia avancada para superficies brilhantes.</p></footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="assets/js/painel.js"></script>
+    <script src="assets/js/bald-mode.js"></script>
   </body>
 </html>

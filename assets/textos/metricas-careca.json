@@ -1,0 +1,20 @@
+[
+  { "label": "Brilho Craniano",           "cor": "purple", "tipo": "rnd",         "min": 88, "max": 100, "sufixo": "%" },
+  { "label": "Coeficiente Aerodinamico",  "cor": "blue",   "tipo": "rnd_dec",     "min": 85, "max": 98               },
+  { "label": "Nivel de Penteabilidade",   "cor": "slate",  "tipo": "fixo",        "valor": "0%",       "bar": 0      },
+  { "label": "Indice de Polimento",       "cor": "orange", "tipo": "rnd",         "min": 80, "max": 99, "sufixo": "%" },
+  { "label": "Autoestima Craniana",       "cor": "green",  "tipo": "rnd",         "min": 85, "max": 100,"sufixo": "%" },
+  { "label": "Perigo de Reflexo Solar",   "cor": "red",    "tipo": "fixo_bar_rnd","valor": "ALTO",      "min": 78, "max": 95 },
+  { "label": "Economia em Shampoo",       "cor": "green",  "tipo": "fixo",        "valor": "100%",     "bar": 100   },
+  { "label": "Resistencia ao Vento",      "cor": "blue",   "tipo": "rnd",         "min": 88, "max": 100,"sufixo": "%" },
+  { "label": "Taxa de Intimidacao",       "cor": "purple", "tipo": "rnd",         "min": 75, "max": 98, "sufixo": "%" },
+  { "label": "Uso de Condicionador",      "cor": "slate",  "tipo": "fixo",        "valor": "0%",       "bar": 0      },
+  { "label": "Capacidade de Reflexao",    "cor": "blue",   "tipo": "rnd",         "min": 82, "max": 100,"sufixo": "%" },
+  { "label": "Resistencia a Chapeu",      "cor": "orange", "tipo": "rnd",         "min": 60, "max": 95, "sufixo": "%" },
+  { "label": "Ousadia Craniana",          "cor": "purple", "tipo": "rnd",         "min": 70, "max": 100,"sufixo": "%" },
+  { "label": "Eficiencia Termica",        "cor": "red",    "tipo": "rnd",         "min": 80, "max": 100,"sufixo": "%" },
+  { "label": "Consumo de Tinta (Retrato)","cor": "green",  "tipo": "fixo",        "valor": "ZERO",     "bar": 100   },
+  { "label": "Velocidade Aerodinamica",   "cor": "blue",   "tipo": "rnd",         "min": 85, "max": 100,"sufixo": "%" },
+  { "label": "Nivel de Parabolicidade",   "cor": "orange", "tipo": "rnd",         "min": 78, "max": 100,"sufixo": "%" },
+  { "label": "Gastos com Penteados",      "cor": "slate",  "tipo": "fixo",        "valor": "R$ 0,00",  "bar": 0      }
+]

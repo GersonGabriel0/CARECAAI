@@ -1,11 +1,16 @@
 const RANKING_API = 'api/ranking.php';
-const TEXTOS_URL = 'assets/js/json_textos.json';
+const TEXTOS_URL = 'assets/textos/ranking.json';
 const MEDALHAS = ['1', '2', '3'];
 
 const themeButton = document.querySelector('#theme-button');
 themeButton.addEventListener('click', () => {
   const isBaldMode = document.documentElement.classList.toggle('bald-mode');
-  themeButton.textContent = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
+  const icon = themeButton.querySelector('.theme-icon');
+  if (icon) {
+    icon.src = isBaldMode ? 'assets/Cabeludo.svg' : 'assets/Careca.svg';
+    icon.alt = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
+  }
+  themeButton.title = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
 });
 
 function escapeHtml(value) {
@@ -17,8 +22,7 @@ function escapeHtml(value) {
 function escolherFrase(textos, item) {
   const opcoes = textos[item.tipo] || [];
   if (!opcoes.length) return 'Superficie craniana sob observacao.';
-
-  return opcoes[Math.floor(Math.random() * opcoes.length)].titulo;
+  return opcoes[Math.floor(Math.random() * opcoes.length)];
 }
 
 function renderLado(data, elementId, textos) {

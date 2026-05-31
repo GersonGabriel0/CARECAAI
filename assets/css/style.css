@@ -84,6 +84,31 @@ footer {
   font-size: 28px;
   font-weight: 800;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.brand-logo {
+  height: 48px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+.brand-logo--white {
+  mix-blend-mode: screen;
+}
+
+.brand-nome {
+  font-size: 22px;
+  font-weight: 800;
+  color: #15162f;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.brand--white .brand-nome {
+  color: #fff;
 }
 
 .brand span,
@@ -121,7 +146,27 @@ button,
   color: #5b38e8;
   background: transparent;
   cursor: pointer;
-  padding: 11px 14px;
+  padding: 6px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-button--fixed {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 12px rgb(0 0 0 / 12%);
+}
+
+.theme-icon {
+  width: 36px;
+  height: 36px;
+  display: block;
+  object-fit: contain;
 }
 
 .hero {
@@ -384,7 +429,6 @@ main.login-page {
 }
 
 .login-card .brand {
-  display: inline-block;
   margin-bottom: 24px;
 }
 
@@ -587,28 +631,88 @@ main.login-page {
 /* A restricao da hackathon virou feature: este tema e ruim de proposito. */
 .bald-mode,
 .bald-mode body {
-  color: #303135;
-  background: #08090a;
+  background: #000 !important;
 }
 
-.bald-mode .panel,
-.bald-mode .ranking,
-.bald-mode .card {
-  border-color: #242529;
-  color: #303135;
-  background: #101113;
-  box-shadow: none;
+/* Tudo invisivel no void */
+.bald-mode *:not(html):not(body):not(.theme-button):not(.theme-icon):not(.bald-popup) {
+  color: #000 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  text-decoration-color: transparent !important;
 }
 
-.bald-mode p,
-.bald-mode a,
-.bald-mode span {
-  color: #303135;
+/* Imagens some no escuro */
+.bald-mode img:not(.theme-icon) {
+  opacity: 0;
+  transition: opacity 0.15s;
 }
 
+/* Botao permanece legivel como unica ancora */
 .bald-mode .theme-button {
-  border-color: #303135;
-  color: #a1a1a1;
+  border-color: #2a2a2a !important;
+  background: #0d0d0d !important;
+}
+
+/* Hover revela — o elemento, seus filhos e netos */
+.bald-mode *:hover {
+  color: #d4d4d4 !important;
+  border-color: #2a2a2a !important;
+}
+
+.bald-mode *:hover > * {
+  color: #d4d4d4 !important;
+  border-color: #2a2a2a !important;
+}
+
+.bald-mode *:hover > * > * {
+  color: #d4d4d4 !important;
+}
+
+/* Imagens revelam quando container e hovereado */
+.bald-mode *:hover > img,
+.bald-mode *:hover > * > img {
+  opacity: 1;
+}
+
+/* Icone do botao sempre visivel */
+.bald-mode .theme-icon {
+  opacity: 1 !important;
+}
+
+/* Popup sempre visivel no bald mode */
+.bald-mode .bald-popup {
+  background: #1a1a1a !important;
+  color: #e0e0e0 !important;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 70%) !important;
+}
+
+/* POPUP BALD MODE */
+.bald-popup {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: #1e0a7a;
+  color: #fff;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  z-index: 9999;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgb(91 56 232 / 45%);
+  letter-spacing: 0.01em;
+}
+
+.bald-popup--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* LANDING: COMO FUNCIONA */
@@ -814,6 +918,92 @@ main.login-page {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* CERTIFICADO */
+
+.cert-wrap {
+  text-align: center;
+  padding: 12px 0 48px;
+}
+
+.header-status-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.cert-btn {
+  font-size: 16px;
+  padding: 14px 32px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #3d1fc2, #5b38e8);
+  box-shadow: 0 8px 24px rgb(91 56 232 / 30%);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.cert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgb(91 56 232 / 40%);
+}
+
+.cert-btn--small {
+  font-size: 13px;
+  padding: 9px 18px;
+  border-radius: 10px;
+}
+
+.cert-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.cert-modal[hidden] { display: none; }
+
+.cert-modal-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 100%;
+}
+
+.cert-canvas {
+  display: block;
+  width: min(800px, 90vw);
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+}
+
+.cert-girando {
+  animation: certGira 0.35s ease forwards;
+}
+
+@keyframes certGira {
+  0%   { transform: scaleX(1);   opacity: 1; }
+  50%  { transform: scaleX(0);   opacity: 0.4; }
+  100% { transform: scaleX(1);   opacity: 1; }
+}
+
+.cert-dica {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin: 0;
+  text-align: center;
+}
+
+.cert-acoes {
+  display: flex;
+  gap: 12px;
 }
 
 /* PAINEIS */
@@ -1589,8 +1779,24 @@ main.login-page {
   padding: 12px 14px;
 }
 
+.galeria-usuario-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .galeria-usuario {
   font-size: 14px;
+}
+
+.galeria-frase {
+  font-size: 11px;
+  color: #8b8fa8;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
 }
 
 .tapa-counter {

@@ -2,8 +2,9 @@ const TAPAS_API = 'api/interacoes.php';
 const ICONE  = { careca: '👋', calvo: '🪒' };
 const ROTULO = { careca: 'tapas', calvo: 'maquinadas' };
 
-let todasFotos = [];
-let filtroAtivo = 'todos';
+let todasFotos    = [];
+let filtroAtivo   = 'todos';
+let frasesGaleria = [];
 
 function escapeHtml(value) {
   const element = document.createElement('span');
@@ -23,15 +24,21 @@ function spawnEmoji(x, y, container, tipo) {
 
 async function onInteracao(event, id, tipo) {
   const fotoElement = event.currentTarget;
-  if (fotoElement.classList.contains('slapped')) return;
+  const jaSlapped   = fotoElement.classList.contains('slapped');
+  const numEl       = document.querySelector(`#tapas-${id} .tapa-num`);
+  const atual       = numEl ? parseInt(numEl.textContent, 10) : 0;
 
-  const rect = fotoElement.getBoundingClientRect();
-  spawnEmoji(event.clientX - rect.left, event.clientY - rect.top, fotoElement, tipo);
-  fotoElement.classList.add('slapping', 'slapped');
-  fotoElement.addEventListener('animationend', () => fotoElement.classList.remove('slapping'), { once: true });
-
-  const numberElement = document.querySelector(`#tapas-${id} .tapa-num`);
-  if (numberElement) numberElement.textContent = parseInt(numberElement.textContent, 10) + 1;
+  // otimismo: aplica o estado invertido imediatamente
+  if (jaSlapped) {
+    fotoElement.classList.remove('slapped');
+    if (numEl) numEl.textContent = Math.max(0, atual - 1);
+  } else {
+    const rect = fotoElement.getBoundingClientRect();
+    spawnEmoji(event.clientX - rect.left, event.clientY - rect.top, fotoElement, tipo);
+    fotoElement.classList.add('slapping', 'slapped');
+    fotoElement.addEventListener('animationend', () => fotoElement.classList.remove('slapping'), { once: true });
+    if (numEl) numEl.textContent = atual + 1;
+  }
 
   try {
     const res = await fetch(TAPAS_API, {
@@ -39,16 +46,27 @@ async function onInteracao(event, id, tipo) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ foto_id: id }),
     });
+
     if (res.status === 401) {
-      // nao logado: reverte o estado visual
-      fotoElement.classList.remove('slapped');
-      if (numberElement) numberElement.textContent = parseInt(numberElement.textContent, 10) - 1;
+      // nao logado: desfaz o otimismo
+      if (jaSlapped) {
+        fotoElement.classList.add('slapped');
+        if (numEl) numEl.textContent = atual;
+      } else {
+        fotoElement.classList.remove('slapped');
+        if (numEl) numEl.textContent = atual;
+      }
+      return;
     }
-    if (res.status === 409) {
-      // ja havia registrado — mantém slapped, sem decrementar
+
+    const data = await res.json().catch(() => ({}));
+    // confirma o estado pelo retorno da API
+    if (data.acao === 'adicionada') {
       fotoElement.classList.add('slapped');
+    } else if (data.acao === 'removida') {
+      fotoElement.classList.remove('slapped');
     }
-  } catch { /* animacao local continua */ }
+  } catch { /* animacao local permanece */ }
 }
 
 function buildCard(foto) {
@@ -60,6 +78,9 @@ function buildCard(foto) {
 
   card.className = `galeria-card galeria-card--${foto.tipo}`;
   card.dataset.tipo = foto.tipo;
+  const pool  = (frasesGaleria[foto.tipo] || []);
+  const frase = pool.length ? pool[Math.floor(Math.random() * pool.length)] : '';
+
   card.innerHTML = `
     <div class="galeria-foto${slapped ? ' slapped' : ''}" data-id="${foto.id}">
       <img src="${escapeHtml(image)}" alt="Foto de ${escapeHtml(foto.usuario)}" loading="lazy">
@@ -69,7 +90,10 @@ function buildCard(foto) {
       </div>
     </div>
     <div class="galeria-info">
-      <strong class="galeria-usuario">@${escapeHtml(foto.usuario)}</strong>
+      <div class="galeria-usuario-wrap">
+        <strong class="galeria-usuario">@${escapeHtml(foto.usuario)}</strong>
+        ${frase ? `<small class="galeria-frase">${escapeHtml(frase)}</small>` : ''}
+      </div>
       <span class="tapa-counter" id="tapas-${foto.id}">
         ${icone} <span class="tapa-num">${escapeHtml(foto.tapas)}</span> ${rotulo}
       </span>
@@ -99,9 +123,13 @@ function aplicarFiltro() {
 
 async function loadGaleria() {
   try {
-    const response = await fetch(TAPAS_API);
-    if (!response.ok) throw new Error();
-    todasFotos = await response.json();
+    const [fotosRes, frasesRes] = await Promise.all([
+      fetch(TAPAS_API),
+      fetch('assets/textos/galeria.json'),
+    ]);
+    if (!fotosRes.ok) throw new Error();
+    todasFotos    = await fotosRes.json();
+    frasesGaleria = frasesRes.ok ? await frasesRes.json() : [];
     aplicarFiltro();
   } catch {
     document.querySelector('#galeria-grid').innerHTML =
@@ -121,7 +149,12 @@ document.querySelectorAll('.filtro-btn').forEach((button) => {
 const themeButton = document.querySelector('#theme-button');
 themeButton.addEventListener('click', () => {
   const isBaldMode = document.documentElement.classList.toggle('bald-mode');
-  themeButton.textContent = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
+  const icon = themeButton.querySelector('.theme-icon');
+  if (icon) {
+    icon.src = isBaldMode ? 'assets/Cabeludo.svg' : 'assets/Careca.svg';
+    icon.alt = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
+  }
+  themeButton.title = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
 });
 
 loadGaleria();

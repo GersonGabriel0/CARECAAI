@@ -1,3 +1,16 @@
+const themeBtn = document.querySelector('#theme-button');
+if (themeBtn) {
+  themeBtn.addEventListener('click', () => {
+    const isBaldMode = document.documentElement.classList.toggle('bald-mode');
+    const icon = themeBtn.querySelector('.theme-icon');
+    if (icon) {
+      icon.src = isBaldMode ? 'assets/Cabeludo.svg' : 'assets/Careca.svg';
+      icon.alt = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
+    }
+    themeBtn.title = isBaldMode ? 'Recuperar visao' : 'Ativar Bald Mode';
+  });
+}
+
 const form        = document.querySelector('#login-form');
 const photoInput  = document.querySelector('#photo-login');
 const uploadLabel = document.querySelector('#upload-label');

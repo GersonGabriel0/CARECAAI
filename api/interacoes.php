@@ -82,19 +82,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $stmt = $pdo->prepare(
-        'INSERT IGNORE INTO interacoes (foto_id, usuario_id) VALUES (:foto_id, :usuario_id)'
+    $check = $pdo->prepare(
+        'SELECT 1 FROM interacoes WHERE foto_id = :foto_id AND usuario_id = :usuario_id'
     );
-    $stmt->execute(['foto_id' => $fotoId, 'usuario_id' => $usuarioId]);
+    $check->execute(['foto_id' => $fotoId, 'usuario_id' => $usuarioId]);
 
-    if ($stmt->rowCount() === 0) {
-        http_response_code(409);
-        echo json_encode(['error' => 'Voce ja interagiu com esta foto.']);
-        exit;
+    if ($check->fetchColumn()) {
+        $pdo->prepare(
+            'DELETE FROM interacoes WHERE foto_id = :foto_id AND usuario_id = :usuario_id'
+        )->execute(['foto_id' => $fotoId, 'usuario_id' => $usuarioId]);
+        echo json_encode(['acao' => 'removida']);
+    } else {
+        $pdo->prepare(
+            'INSERT INTO interacoes (foto_id, usuario_id) VALUES (:foto_id, :usuario_id)'
+        )->execute(['foto_id' => $fotoId, 'usuario_id' => $usuarioId]);
+        http_response_code(201);
+        echo json_encode(['acao' => 'adicionada']);
     }
-
-    http_response_code(201);
-    echo json_encode(['message' => 'Interacao registrada.']);
     exit;
 }
 

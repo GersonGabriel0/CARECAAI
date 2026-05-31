@@ -1,0 +1,20 @@
+[
+  { "label": "Entradas Triunfais",        "cor": "orange", "tipo": "score_cap",       "cap": 79,  "sufixo": "%" },
+  { "label": "Potencial Aerodinamico",    "cor": "blue",   "tipo": "score_plus_dec",  "add": 8,   "cap": 79     },
+  { "label": "Fios Sobreviventes",        "cor": "purple", "tipo": "score_inv",       "floor": 8, "sufixo": "%" },
+  { "label": "Indice de Desapego",        "cor": "orange", "tipo": "rnd",             "min": 25,  "max": 68,    "sufixo": "%" },
+  { "label": "Esperanca Craniana",        "cor": "green",  "tipo": "score_plus",      "add": 24,  "cap": 98,    "sufixo": "%" },
+  { "label": "Risco de Pente Emprestado", "cor": "red",    "tipo": "score_threshold", "threshold": 50, "acima": "MEDIO", "abaixo": "BAIXO", "bar_acima": 52, "bar_abaixo": 20 },
+  { "label": "Taxa de Negacao",           "cor": "orange", "tipo": "rnd",             "min": 20,  "max": 75,    "sufixo": "%" },
+  { "label": "Foliculos em Greve",        "cor": "red",    "tipo": "score_plus_rnd",  "rnd_min": 5, "rnd_max": 20, "cap": 95, "sufixo": "%" },
+  { "label": "Progresso para Pista",      "cor": "blue",   "tipo": "score_pct",                               "sufixo": "%" },
+  { "label": "Chance de Virar Careca",    "cor": "purple", "tipo": "score_cap",       "cap": 85,  "sufixo": "%" },
+  { "label": "Gastos em Shampoo",         "cor": "green",  "tipo": "score_inv_pct",                           "sufixo": "%" },
+  { "label": "Cobertura do Couro",        "cor": "blue",   "tipo": "score_inv_pct",                           "sufixo": "%" },
+  { "label": "Velocidade da Calvice",     "cor": "red",    "tipo": "score_plus",      "add": 10,  "cap": 90,    "sufixo": "%" },
+  { "label": "Autoestima do Topete",      "cor": "orange", "tipo": "score_inv",       "floor": 10,"sufixo": "%" },
+  { "label": "Resistencia Capilar",       "cor": "slate",  "tipo": "score_inv",       "floor": 5, "sufixo": "%" },
+  { "label": "Nivel de Negacao Capilar",  "cor": "purple", "tipo": "rnd",             "min": 30,  "max": 80,    "sufixo": "%" },
+  { "label": "Apego ao Pente",            "cor": "orange", "tipo": "score_inv",       "floor": 3, "sufixo": "%" },
+  { "label": "Urgencia do Corte Zero",    "cor": "red",    "tipo": "score_cap",       "cap": 90,  "sufixo": "%" }
+]
