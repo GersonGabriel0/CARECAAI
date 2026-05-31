@@ -33,3 +33,17 @@ CREATE TABLE IF NOT EXISTS interacoes (
     FOREIGN KEY (foto_id)    REFERENCES fotos(id)    ON DELETE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
+
+-- ringue: historico publico de batalhas
+CREATE TABLE IF NOT EXISTS batalhas (
+    id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    desafiante_id   INT UNSIGNED NOT NULL,
+    oponente_id     INT UNSIGNED NOT NULL,
+    vencedor_id     INT UNSIGNED NOT NULL,
+    vit_desafiante  TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    vit_oponente    TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (desafiante_id) REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (oponente_id)   REFERENCES usuarios(id) ON DELETE CASCADE,
+    FOREIGN KEY (vencedor_id)   REFERENCES usuarios(id) ON DELETE CASCADE
+);

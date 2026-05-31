@@ -23,66 +23,90 @@ let oponente        = null;
 let ultimoResult    = null;
 let opRevanche      = null;
 
-// ── Historico de batalhas (localStorage) ──────────────────────
-const STORAGE_KEY = `carecai_batalhas_${usuario}`;
+// ── Historico de batalhas (banco de dados) ─────────────────────
 
-function carregarBatalhas() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+// Promise compartilhada — uma unica requisicao mesmo se chamada duas vezes
+let _batalhasPromise = null;
+function getBatalhas() {
+  if (!_batalhasPromise) {
+    _batalhasPromise = fetch('api/batalhas.php')
+      .then((r) => (r.ok ? r.json() : []))
+      .catch(() => []);
+  }
+  return _batalhasPromise;
 }
 
-function salvarBatalha(result) {
-  const lista = carregarBatalhas();
-  lista.unshift({
-    data:     new Date().toISOString(),
-    eu:       { usuario, tipo, score, foto: fotoPath },
-    oponente: { usuario: oponente.usuario, tipo: oponente.tipo, score: parseInt(oponente.score, 10), foto: oponente.foto },
-    vencedor: result.vencedor,
-    vitEu:    result.vitEu,
-    vitOp:    result.vitOp,
-  });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(lista.slice(0, 30)));
+function invalidarCacheBatalhas() {
+  _batalhasPromise = null;
 }
 
-function renderCarrosel() {
-  const wrap      = document.getElementById('historico-wrap');
-  const carousel  = document.getElementById('historico-carousel');
-  const batalhas  = carregarBatalhas();
+async function salvarBatalha(result) {
+  if (!oponente?.id) return;
+  try {
+    await fetch('api/batalhas.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        oponente_id:    oponente.id,
+        vit_desafiante: result.vitEu,
+        vit_oponente:   result.vitOp,
+        eu_venci:       result.vencedor === 'eu',
+      }),
+    });
+  } catch { /* falha silenciosa — batalha continua */ }
+}
 
-  if (!batalhas.length) { wrap.hidden = true; return; }
+async function renderCarrosel() {
+  const wrap     = document.getElementById('historico-wrap');
+  const carousel = document.getElementById('historico-carousel');
 
-  wrap.hidden = false;
-  carousel.innerHTML = batalhas.map((b) => {
-    const euVenceu = b.vencedor === 'eu';
-    const data     = new Date(b.data).toLocaleDateString('pt-BR');
-    const hora     = new Date(b.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    const avatar1  = b.eu.foto
-      ? `<img class="hc-avatar" src="${esc(b.eu.foto)}" alt="${esc(b.eu.usuario)}" onerror="this.style.display='none'">`
-      : `<span class="hc-avatar-emoji">${b.eu.tipo === 'careca' ? '🏆' : '🌱'}</span>`;
-    const avatar2  = b.oponente.foto
-      ? `<img class="hc-avatar" src="${esc(b.oponente.foto)}" alt="${esc(b.oponente.usuario)}" onerror="this.style.display='none'">`
-      : `<span class="hc-avatar-emoji">${b.oponente.tipo === 'careca' ? '🏆' : '🌱'}</span>`;
+  try {
+    const batalhas = await getBatalhas();
 
-    return `
-      <div class="hc-card hc-card--${euVenceu ? 'vitoria' : 'derrota'}">
-        <span class="hc-resultado-badge">${euVenceu ? '🏆 Vitória' : '💀 Derrota'}</span>
-        <div class="hc-fighters">
-          <div class="hc-side">
-            ${avatar1}
-            <small>@${esc(b.eu.usuario)}</small>
+    if (!batalhas.length) { wrap.hidden = true; return; }
+
+    wrap.hidden = false;
+    carousel.innerHTML = batalhas.map((b) => {
+      const euDes    = b.desafiante === usuario;
+      const euVenceu = b.vencedor   === usuario;
+      const data     = new Date(b.created_at).toLocaleDateString('pt-BR');
+      const hora     = new Date(b.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+      const av1 = b.foto_desafiante
+        ? `<img class="hc-avatar" src="${esc(b.foto_desafiante)}" alt="${esc(b.desafiante)}" onerror="this.style.display='none'">`
+        : `<span class="hc-avatar-emoji">${b.tipo_desafiante === 'careca' ? '🏆' : '🌱'}</span>`;
+      const av2 = b.foto_oponente
+        ? `<img class="hc-avatar" src="${esc(b.foto_oponente)}" alt="${esc(b.oponente)}" onerror="this.style.display='none'">`
+        : `<span class="hc-avatar-emoji">${b.tipo_oponente === 'careca' ? '🏆' : '🌱'}</span>`;
+
+      const cor = !euDes && b.desafiante !== usuario && b.oponente !== usuario
+        ? 'neutro'
+        : euVenceu ? 'vitoria' : 'derrota';
+
+      return `
+        <div class="hc-card hc-card--${cor}">
+          <span class="hc-resultado-badge">🏆 ${esc(b.vencedor)}</span>
+          <div class="hc-fighters">
+            <div class="hc-side${b.desafiante === b.vencedor ? ' hc-side--winner' : ''}">
+              ${av1}
+              <small>@${esc(b.desafiante)}</small>
+            </div>
+            <div class="hc-placar">
+              <strong>${b.vit_desafiante}</strong>
+              <span>×</span>
+              <strong>${b.vit_oponente}</strong>
+            </div>
+            <div class="hc-side${b.oponente === b.vencedor ? ' hc-side--winner' : ''}">
+              ${av2}
+              <small>@${esc(b.oponente)}</small>
+            </div>
           </div>
-          <div class="hc-placar">
-            <strong>${b.vitEu}</strong>
-            <span>×</span>
-            <strong>${b.vitOp}</strong>
-          </div>
-          <div class="hc-side">
-            ${avatar2}
-            <small>@${esc(b.oponente.usuario)}</small>
-          </div>
-        </div>
-        <small class="hc-data">${data} ${hora}</small>
-      </div>`;
-  }).join('');
+          <small class="hc-data">${data} ${hora}</small>
+        </div>`;
+    }).join('');
+  } catch {
+    wrap.hidden = true;
+  }
 }
 
 // ── Categorias de batalha ──────────────────────────────────────
@@ -164,8 +188,13 @@ async function carregarOponentes() {
 
   try {
     const res = await fetch('api/ringue.php');
-    if (!res.ok) throw new Error();
-    const lista = await res.json();
+    let lista;
+    try {
+      lista = await res.json();
+    } catch {
+      throw new Error(`Resposta invalida do servidor (HTTP ${res.status})`);
+    }
+    if (!res.ok) throw new Error(lista.error || `HTTP ${res.status}`);
 
     if (!lista.length) {
       const tipoTexto = tipo === 'careca' ? 'carecas' : 'calvos';
@@ -173,8 +202,13 @@ async function carregarOponentes() {
       return;
     }
 
-    const batalhas = carregarBatalhas();
-    const jaBatalhouSet = new Set(batalhas.map((b) => b.oponente.usuario));
+    const batalhas = await getBatalhas();
+    // Batalhas em que EU participei — determina "Revanche" vs "Desafiar"
+    const jaBatalhouSet = new Set(
+      batalhas
+        .filter((b) => b.desafiante === usuario || b.oponente === usuario)
+        .map((b) => b.desafiante === usuario ? b.oponente : b.desafiante)
+    );
 
     grid.innerHTML = '';
     lista.forEach((op) => {
@@ -199,8 +233,8 @@ async function carregarOponentes() {
       }
       grid.appendChild(card);
     });
-  } catch {
-    grid.innerHTML = '<p class="ringue-loading">Erro ao carregar oponentes. Verifique o servidor PHP.</p>';
+  } catch (err) {
+    grid.innerHTML = `<p class="ringue-loading">Erro ao carregar oponentes:<br><small>${err.message}</small></p>`;
   }
 }
 
@@ -228,8 +262,10 @@ function batalhar(scoreEu, scoreOp, numRodadas = 5) {
 // ── VIEW 3: resultados ─────────────────────────────────────────
 function renderResultados(result, anterior = null) {
   ultimoResult = result;
-  salvarBatalha(result);
-  renderCarrosel();
+  salvarBatalha(result).then(() => {
+    invalidarCacheBatalhas();  // força nova requisicao para dados frescos
+    renderCarrosel();
+  });
   const { rodadas, vencedor, vitEu, vitOp } = result;
   const euVenceu = vencedor === 'eu';
 
@@ -445,6 +481,8 @@ document.getElementById('btn-novo-desafio').addEventListener('click', () => {
   document.getElementById('revanche-zona').hidden = true;
   document.getElementById('btn-revanche').hidden  = true;
   mostrarView('view-selecao');
+  invalidarCacheBatalhas();   // garante dados frescos
+  carregarOponentes();        // recarrega lista com botoes corretos
 });
 
 document.getElementById('revanche-foto').addEventListener('change', (e) => {
@@ -470,7 +508,7 @@ document.getElementById('revanche-op-modal').addEventListener('click', (e) => {
 
 // ── Init ───────────────────────────────────────────────────────
 renderMeuPerfil();
-renderCarrosel();
+renderCarrosel();   // async — atualiza o carrosel quando a API responder
 carregarOponentes();
 
 // Atualiza subtitulo com o tipo do usuario

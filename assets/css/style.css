@@ -2289,6 +2289,9 @@ main.login-page {
 
 .hc-card--vitoria { border-color: #c4b5fd; background: #f5f3ff; }
 .hc-card--derrota { border-color: #fca5a5; background: #fff5f5; }
+.hc-card--neutro  { border-color: #e0deec; background: #fff; }
+
+.hc-side--winner small { color: #5b38e8; font-weight: 700; }
 
 .hc-resultado-badge {
   font-size: 11px;

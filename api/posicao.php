@@ -6,6 +6,7 @@ session_start();
 header('Content-Type: application/json; charset=utf-8');
 
 $usuarioId = $_SESSION['carecai_usuario_id'] ?? null;
+session_write_close();
 
 if (!$usuarioId) {
     http_response_code(401);

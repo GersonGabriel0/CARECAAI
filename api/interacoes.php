@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     $jaTapou   = [];
     $usuarioId = $_SESSION['carecai_usuario_id'] ?? null;
+    session_write_close();
 
     if ($usuarioId) {
         $stmt = $pdo->prepare('SELECT foto_id FROM interacoes WHERE usuario_id = :uid');
