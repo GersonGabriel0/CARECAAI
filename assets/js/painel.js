@@ -127,9 +127,29 @@ async function carregarDiagnostico() {
   }
 }
 
+async function carregarPosicao() {
+  if (tipo !== 'careca') return;
+  try {
+    const res  = await fetch('api/posicao.php');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.error) return;
+
+    const { posicao, total } = data;
+
+    const overlayPos = document.querySelector('#ranking-posicao');
+    const overlayTot = document.querySelector('#ranking-total');
+
+    if (overlayPos) overlayPos.textContent = posicao;
+    if (overlayTot) overlayTot.textContent = total;
+  } catch { /* mantém display padrão */ }
+}
+
 async function init() {
   if (tipo === 'careca') {
-    setText('#ranking-percentual', Math.max(1, 102 - score));
+    // valores provisórios enquanto a API carrega
+    const overlayPos = document.querySelector('#ranking-posicao');
+    if (overlayPos) overlayPos.textContent = '...';
   } else {
     setText('#painel-score', `${score} pts`);
     const fill   = document.querySelector('#progresso-fill');
@@ -137,7 +157,7 @@ async function init() {
     setText('#faltam', faltam);
     if (fill) fill.style.width = `${Math.min((score / 80) * 100, 100)}%`;
   }
-  await Promise.all([renderMetrics(), carregarDiagnostico()]);
+  await Promise.all([renderMetrics(), carregarDiagnostico(), carregarPosicao()]);
 }
 
 init();
