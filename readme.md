@@ -83,18 +83,49 @@ CARECA/
   analise.html               Tela de analise alternativa
 ```
 
-## Preparando o ambiente
+## Como rodar em 5 passos
 
-1. Instale XAMPP, Laragon ou outro ambiente com PHP e MySQL.
-2. Coloque o projeto na pasta pública do servidor.
-3. Execute `database/schema.sql` no MySQL.
-4. Copie `api/config/database-example.php` para `api/config/database.php`.
-5. Ajuste as credenciais no arquivo criado.
-6. Copie `api/config/gemini-example.php` para `api/config/gemini.php`.
-7. Informe sua chave da API Gemini no arquivo criado.
-8. Copie `api/config/xai-example.php` para `api/config/xai.php`.
-9. Informe sua chave da API xAI no arquivo criado.
-10. Abra o projeto no navegador.
+**Pré-requisito:** PHP 8.1+ com extensões `pdo_mysql`, `curl` e `openssl` habilitadas, e MySQL/MariaDB rodando. Recomendamos [XAMPP](https://www.apachefriends.org/).
+
+**1. Clone e entre na pasta**
+```bash
+git clone https://github.com/seu-usuario/carequeIA.git
+cd carequeIA
+```
+
+**2. Suba o banco de dados**
+
+Execute o arquivo `database/schema.sql` no seu MySQL (phpMyAdmin, Workbench ou linha de comando):
+```bash
+mysql -u root -p < database/schema.sql
+```
+
+**3. Configure as credenciais**
+```bash
+cp api/config/database-example.php  api/config/database.php
+cp api/config/gemini-example.php    api/config/gemini.php
+cp api/config/xai-example.php       api/config/xai.php
+```
+Edite cada arquivo com suas credenciais. Chaves de API gratuitas:
+- Gemini → [aistudio.google.com](https://aistudio.google.com)
+- xAI Grok → [console.x.ai](https://console.x.ai)
+
+**4. Inicie o servidor PHP**
+```bash
+# Windows (XAMPP)
+C:\xampp\php\php.exe -S localhost:8000
+
+# Linux / Mac
+php -S localhost:8000
+```
+
+**5. Acesse no navegador**
+```
+http://localhost:8000
+```
+Envie uma foto, descubra se você é careca ou calvo e explore o sistema. Nenhum cadastro ou senha necessários.
+
+> **Credenciais de teste para o júri:** utilize as chaves de API já configuradas no repositório privado compartilhado com os avaliadores, ou gere suas próprias gratuitamente nos links acima em menos de 2 minutos.
 
 Exemplo com o servidor embutido do PHP:
 
